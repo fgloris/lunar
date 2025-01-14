@@ -9,7 +9,7 @@ option(DEBUG "Enable debug mode" ON)
 if(NOT DEBUG)
     add_compile_definitions(NDEBUG)
 else()
-    message(STATUS "Debug mode is enabled")
+    message(WARNING "Debug mode is enabled")
 endif()
 
 add_subdirectory(3rdparties/glad)

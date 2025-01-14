@@ -16,7 +16,7 @@ namespace lunar {
             return instance;
         }
         
-        void init(int width, int height, const std::string& title);
+        void init(int width, int height, const std::string& title, bool isFullscreen = false);
 
         bool shouldClose() const { return glfwWindowShouldClose(window); }
         void swapBuffers() { glfwSwapBuffers(window); }
@@ -37,5 +37,6 @@ namespace lunar {
         GLFWwindow* window{nullptr};
         int width{0}, height{0};
         std::string title;
+        bool isFullscreen{false};
     };
 } 

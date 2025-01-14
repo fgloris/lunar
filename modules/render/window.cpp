@@ -11,10 +11,11 @@ namespace lunar {
         }
     }
 
-    void Window::init(int width, int height, const std::string& title){
+    void Window::init(int width, int height, const std::string& title, bool isFullscreen){
         this->width = width;
         this->height = height;
         this->title = title;
+        this->isFullscreen = isFullscreen;
         initGLFW();
         initWindow();
         initGLAD();
@@ -32,7 +33,13 @@ namespace lunar {
     }
 
     void Window::initWindow() {
-        window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        if (isFullscreen) {
+            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+            window = glfwCreateWindow(mode->width, mode->height, title.c_str(), monitor, nullptr);
+        } else {
+            window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        }
         if (!window) {
             glfwTerminate();
             throw std::runtime_error("Failed to create GLFW window");
