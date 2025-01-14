@@ -1,31 +1,19 @@
-#include <glad.h>
-#include <GLFW/glfw3.h>
+#include "window.hpp"
+#include <iostream>
 
 int main() {
-    if (!glfwInit()) {
+    auto& window = lunar::Window::getInstance();
+    try {
+        window.init(1800, 1600, "OpenGL");
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
         return -1;
     }
-
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr);
-    if (!window) {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-
-    // 初始化GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        glfwTerminate();
-        return -1;
-    }
-
-    while (!glfwWindowShouldClose(window)) {
+    while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        window.swapBuffers();
+        window.pollEvents();
     }
 
-    glfwTerminate();
     return 0;
 }

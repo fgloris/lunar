@@ -14,5 +14,3 @@ endif()
 
 add_subdirectory(3rdparties/glad)
 add_subdirectory(lunar/render)
-
-
