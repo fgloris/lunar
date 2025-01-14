@@ -13,4 +13,14 @@ else()
 endif()
 
 add_subdirectory(3rdparties/glad)
-add_subdirectory(lunar/render)
+add_subdirectory(modules/render)
+
+add_executable(${PROJECT_NAME} modules/main/main.cpp)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    modules/render
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    render
+)

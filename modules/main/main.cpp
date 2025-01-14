@@ -4,7 +4,7 @@
 int main() {
     auto& window = lunar::Window::getInstance();
     try {
-        window.init(1800, 1600, "OpenGL");
+        window.init(1800, 1200, "OpenGL");
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;
