@@ -8,6 +8,8 @@ namespace lunar {
         Shader(int shader_type, const std::string& shader_path);
         ~Shader();
         unsigned int getID() const { return shader_id; }
+        friend class ShaderProgram;
+        friend Shader getShader(int shader_type);
     private:
         unsigned int shader_type;
         unsigned int shader_id;
@@ -29,4 +31,6 @@ namespace lunar {
         unsigned int VBO, VAO, EBO; // Vertex Buffer Object, Vertex Array Object, Element Buffer Object
         unsigned int program_id;
     };
+
+    Shader getShader(int shader_type);
 }

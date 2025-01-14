@@ -6,15 +6,7 @@
 #include <glad.h>
 
 namespace lunar {
-    Shader::Shader(int shader_type, const std::string& shader_path) : shader_type(shader_type) {
-        std::ifstream file(shader_path);
-        if (!file.is_open()) {
-            throw std::runtime_error("ERROR: SHADER FILE NOT FOUND: " + shader_path);
-        }
-        
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        std::string shader_code = buffer.str();
+    Shader::Shader(int shader_type, const std::string& shader_code) : shader_type(shader_type) {
         const char* shader_code_cstr = shader_code.c_str();
         
         shader_id = glCreateShader(shader_type);
@@ -117,5 +109,26 @@ namespace lunar {
     void ShaderProgram::unbindBuffers() {
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
         glBindVertexArray(0);
+    }
+
+    Shader getShader(int shader_type){
+        switch (shader_type)
+        {
+        case GL_VERTEX_SHADER:{
+            const std::string source =
+            #include "GLSL/vertex.glsl"
+            ;
+            return Shader(shader_type, source);
+        }
+        case GL_FRAGMENT_SHADER:{
+            const std::string source =
+            #include "GLSL/fragment.glsl"
+            ;
+            return Shader(shader_type, source);
+        }
+        
+        default:
+            throw std::runtime_error("ERROR: SHADER TYPE NOT SUPPORTED\n");
+        }
     }
 }

@@ -14,7 +14,3 @@ target_link_libraries(${SUB_LIBRARY_NAME}
     PRIVATE glad
     PUBLIC glfw
 )
-
-file(COPY ${CMAKE_SOURCE_DIR}/modules/render/GLSL 
-            DESTINATION ${CMAKE_BINARY_DIR}/modules/render 
-            FOLLOW_SYMLINK_CHAIN)

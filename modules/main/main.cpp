@@ -11,8 +11,8 @@ int main() {
         return -1;
     }
 
-    lunar::Shader vertex_shader(GL_VERTEX_SHADER, "modules/render/GLSL/vertex.glsl");
-    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER, "modules/render/GLSL/fragment.glsl");
+    lunar::Shader vertex_shader = lunar::getShader(GL_VERTEX_SHADER);
+    lunar::Shader fragment_shader = lunar::getShader(GL_FRAGMENT_SHADER);
     lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
 
     while (!window.shouldClose()) {
