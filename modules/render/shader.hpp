@@ -19,8 +19,13 @@ namespace lunar {
         ~ShaderProgram();
         void draw() const;
     private:
+        void attachShaders(Shader& vertex_shader, Shader& fragment_shader);
+        void bindBuffers();
+        void unbindBuffers();
+
         std::vector<float> vertices;
-        unsigned int VBO, VAO; // Vertex Buffer Object, Vertex Array Object
+        std::vector<unsigned int> ebo_indices;
+        unsigned int VBO, VAO, EBO; // Vertex Buffer Object, Vertex Array Object, Element Buffer Object
         unsigned int program_id;
     };
 }
