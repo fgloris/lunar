@@ -73,22 +73,45 @@ namespace lunar {
         }
     }
 
-    void ShaderProgram::bindBuffers(){
+    void ShaderProgram::setVertices(const std::vector<float>& vertices) {
+        this->vertices = vertices;
+    }
+
+    void ShaderProgram::bindBuffers() {
+        // 顶点数据：位置(xyz) + 颜色(rgb)
+        vertices = {
+            // 位置          // 颜色
+            -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // 左下，红色
+             0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下，绿色
+             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 顶部，蓝色
+        };
+
+        // VBO - 存储所有顶点数据
         glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
+        // VAO - 配置如何解释数据
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ebo_indices), &ebo_indices[0], GL_STATIC_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        // 配置位置属性
+        glVertexAttribPointer(0,                // 位置属性的layout location
+                             3,                 // 3个float (xyz)
+                             GL_FLOAT,          // 数据类型
+                             GL_FALSE,          // 不需要归一化
+                             6 * sizeof(float), // 步长：6个float (xyz + rgb)
+                             (void*)0);         // 位置数据偏移量为0
         glEnableVertexAttribArray(0);
+
+        // 配置颜色属性
+        glVertexAttribPointer(1,                // 颜色属性的layout location
+                             3,                 // 3个float (rgb)
+                             GL_FLOAT,          // 数据类型
+                             GL_FALSE,          // 不需要归一化
+                             6 * sizeof(float), // 步长：6个float
+                             (void*)(3 * sizeof(float))); // 颜色数据从第4个float开始
+        glEnableVertexAttribArray(1);
     }
 
     void ShaderProgram::unbindBuffers() {

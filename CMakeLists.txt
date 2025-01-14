@@ -3,13 +3,13 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(lunar)
 
-# 添加debug选项，默认为ON
-option(DEBUG "Enable debug mode" ON)
+# debug选项默认为OFF, 为了编译速度
+option(DEBUG "Enable debug mode" OFF)
 
 add_subdirectory(3rdparties/glad)
 add_subdirectory(modules/render)
 
-if(NOT DEBUG)
+if(NOT DEBUG OR NDEBUG)
     add_compile_definitions(NDEBUG)
 else()
     message(WARNING "Debug mode is enabled, enabling googletest")
