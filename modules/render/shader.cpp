@@ -23,19 +23,57 @@ namespace lunar {
         }
     }
     
+    Shader::Shader(int shader_type) : shader_type(shader_type) {
+        std::string shader_code;
+        switch (shader_type) {
+        case GL_VERTEX_SHADER:
+            shader_code = 
+            #include "GLSL/vertex.glsl"
+            ;
+            break;
+        case GL_FRAGMENT_SHADER:
+            shader_code = 
+            #include "GLSL/fragment.glsl"
+            ;
+            break;
+        case GL_COMPUTE_SHADER:
+            shader_code = 
+            #include "GLSL/compute.glsl"
+            ;
+            break;
+        default:
+            throw std::runtime_error("ERROR: SHADER TYPE NOT SUPPORTED\n");
+        }
+        const char* shader_code_cstr = shader_code.c_str();
+        
+        shader_id = glCreateShader(shader_type);
+        glShaderSource(shader_id, 1, &shader_code_cstr, nullptr);
+        glCompileShader(shader_id);
+
+        int success;
+        char infoLog[512];
+        glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
+            throw std::runtime_error("ERROR: SHADER COMPILATION FAILED\n" + std::string(infoLog));
+        }
+    }
+
     Shader::~Shader() {
         glDeleteShader(shader_id);
     }
 
     ShaderProgram::ShaderProgram(Shader& vertex_shader, Shader& fragment_shader) {
         attachShaders(vertex_shader, fragment_shader);
+        bindBuffers();
+        unbindBuffers();
+    }
 
-        vertices = {
-            -0.5f, -0.5f, 0.0f, // left  
-             0.5f, -0.5f, 0.0f, // right 
-             0.0f,  0.5f, 0.0f  // top   
-        };
-
+    ShaderProgram::ShaderProgram() {
+        Shader vertex_shader(GL_VERTEX_SHADER);
+        Shader fragment_shader(GL_FRAGMENT_SHADER);
+        attachShaders(vertex_shader, fragment_shader);
         bindBuffers();
         unbindBuffers();
     }

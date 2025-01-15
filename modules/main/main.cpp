@@ -11,9 +11,7 @@ int main() {
         return -1;
     }
 
-    lunar::Shader vertex_shader = lunar::getShader(GL_VERTEX_SHADER);
-    lunar::Shader fragment_shader = lunar::getShader(GL_FRAGMENT_SHADER);
-    lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
+    lunar::ShaderProgram shader_program;
 
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);

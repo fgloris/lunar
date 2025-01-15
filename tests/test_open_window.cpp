@@ -26,23 +26,29 @@ TEST_F(WindowTest, WindowInitialization) {
 TEST_F(WindowTest, ShaderCompilation) {
     // 测试着色器编译
     EXPECT_NO_THROW({
-        lunar::Shader vertex_shader(GL_VERTEX_SHADER, "modules/render/GLSL/vertex.glsl");
-        lunar::Shader fragment_shader(GL_FRAGMENT_SHADER, "modules/render/GLSL/fragment.glsl");
+        lunar::Shader vertex_shader(GL_VERTEX_SHADER);
+        lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
     });
 }
 
 TEST_F(WindowTest, ShaderProgramLinking) {
-    lunar::Shader vertex_shader(GL_VERTEX_SHADER, "modules/render/GLSL/vertex.glsl");
-    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER, "modules/render/GLSL/fragment.glsl");
+    lunar::Shader vertex_shader(GL_VERTEX_SHADER);
+    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
     
     EXPECT_NO_THROW({
         lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
     });
 }
 
+TEST_F(WindowTest, AutoConstruct){
+    EXPECT_NO_THROW({
+        lunar::ShaderProgram shader_program;
+    });
+}
+
 TEST_F(WindowTest, BasicRendering) {
-    lunar::Shader vertex_shader(GL_VERTEX_SHADER, "modules/render/GLSL/vertex.glsl");
-    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER, "modules/render/GLSL/fragment.glsl");
+    lunar::Shader vertex_shader(GL_VERTEX_SHADER);
+    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
     lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
 
     // 测试一帧渲染

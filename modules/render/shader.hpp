@@ -6,6 +6,7 @@ namespace lunar {
     class Shader {
     public:
         Shader(int shader_type, const std::string& shader_path);
+        Shader(int shader_type);
         ~Shader();
         unsigned int getID() const { return shader_id; }
         friend class ShaderProgram;
@@ -18,6 +19,7 @@ namespace lunar {
     class ShaderProgram {
     public:
         ShaderProgram(Shader& vertex_shader, Shader& fragment_shader);
+        ShaderProgram();
         ~ShaderProgram();
         void draw() const;
         void setVertices(const std::vector<float>& vertices);
