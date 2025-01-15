@@ -12,7 +12,11 @@ int main() {
     }
 
     lunar::ShaderProgram shader_program;
-
+    shader_program.setVertices({
+        -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // 左下，红色
+         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下，绿色
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 顶部，蓝色
+    });
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
         shader_program.draw();

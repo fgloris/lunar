@@ -22,7 +22,7 @@ namespace lunar {
         ShaderProgram();
         ~ShaderProgram();
         void draw() const;
-        void setVertices(const std::vector<float>& vertices);
+        void setVertices(std::vector<float> vertices);
     private:
         void attachShaders(Shader& vertex_shader, Shader& fragment_shader);
         void bindBuffers();

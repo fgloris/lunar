@@ -103,23 +103,16 @@ namespace lunar {
         }
     }
 
-    void ShaderProgram::setVertices(const std::vector<float>& vertices) {
-        this->vertices = vertices;
+    void ShaderProgram::setVertices(std::vector<float> vertices) {
+        this->vertices = std::move(vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(float), &this->vertices[0], GL_STATIC_DRAW);
     }
 
     void ShaderProgram::bindBuffers() {
-        // 顶点数据：位置(xyz) + 颜色(rgb)
-        vertices = {
-            // 位置          // 颜色
-            -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // 左下，红色
-             0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下，绿色
-             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 顶部，蓝色
-        };
-
         // VBO - 存储所有顶点数据
         glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
         // VAO - 配置如何解释数据
         glGenVertexArrays(1, &VAO);
