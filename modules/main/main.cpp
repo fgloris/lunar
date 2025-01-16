@@ -17,6 +17,7 @@ int main() {
          0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下，绿色
          0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 顶部，蓝色
     });
+    shader_program.use();
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
         shader_program.draw();

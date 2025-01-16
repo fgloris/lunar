@@ -88,6 +88,10 @@ namespace lunar {
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
+    void ShaderProgram::use() const {
+        glUseProgram(program_id);
+    }
+
     void ShaderProgram::attachShaders(Shader& vertex_shader, Shader& fragment_shader){
         program_id = glCreateProgram();
         glAttachShader(program_id, vertex_shader.getID());
@@ -140,26 +144,5 @@ namespace lunar {
     void ShaderProgram::unbindBuffers() {
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
         glBindVertexArray(0);
-    }
-
-    Shader getShader(int shader_type){
-        switch (shader_type)
-        {
-        case GL_VERTEX_SHADER:{
-            const std::string source =
-            #include "GLSL/vertex.glsl"
-            ;
-            return Shader(shader_type, source);
-        }
-        case GL_FRAGMENT_SHADER:{
-            const std::string source =
-            #include "GLSL/fragment.glsl"
-            ;
-            return Shader(shader_type, source);
-        }
-        
-        default:
-            throw std::runtime_error("ERROR: SHADER TYPE NOT SUPPORTED\n");
-        }
     }
 }
