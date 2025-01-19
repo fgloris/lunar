@@ -1,4 +1,5 @@
 #include "shader.hpp"
+#include "texture.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -14,10 +15,10 @@ namespace lunar {
         glCompileShader(shader_id);
 
         int success;
-        char infoLog[512];
         glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
         if (!success)
         {
+            char infoLog[512];
             glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
             throw std::runtime_error("ERROR: SHADER COMPILATION FAILED\n" + std::string(infoLog));
         }
@@ -51,10 +52,10 @@ namespace lunar {
         glCompileShader(shader_id);
 
         int success;
-        char infoLog[512];
         glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
         if (!success)
         {
+            char infoLog[512];
             glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
             throw std::runtime_error("ERROR: SHADER COMPILATION FAILED\n" + std::string(infoLog));
         }
@@ -99,9 +100,9 @@ namespace lunar {
         glLinkProgram(program_id);
 
         int success;
-        char infoLog[512];
         glGetProgramiv(program_id, GL_LINK_STATUS, &success);
         if (!success) {
+            char infoLog[512];
             glGetProgramInfoLog(program_id, 512, NULL, infoLog);
             throw std::runtime_error("ERROR: SHADER PROGRAM LINKING FAILED\n" + std::string(infoLog));
         }

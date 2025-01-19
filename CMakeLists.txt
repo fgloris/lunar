@@ -25,6 +25,7 @@ else()
 endif()
 
 add_subdirectory(3rdparties/glad)
+add_subdirectory(3rdparties/stb_image)
 add_subdirectory(modules/render)
 
 if(NOT DEBUG OR NDEBUG)

@@ -70,6 +70,13 @@
         "*.glsl": "cpp",
         "csignal": "cpp",
         "any": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "strstream": "cpp",
+        "codecvt": "cpp",
+        "source_location": "cpp",
+        "future": "cpp",
+        "ranges": "cpp",
+        "cfenv": "cpp",
+        "valarray": "cpp"
     }
 }
