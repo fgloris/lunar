@@ -5,13 +5,15 @@
 namespace lunar{
 
 Texture::Texture(const std::string &filename,
+    const unsigned int id,
     const unsigned int expand_param,
     const unsigned int filter_param_max,
     const unsigned int filter_param_min,
     const unsigned int texture_format,
     const unsigned int source_img_format,
     bool generate_mitmap
-    ){
+    ):id(id){
+    name = std::string("lunar_texture_")+std::to_string(id);
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);

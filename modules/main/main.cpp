@@ -23,7 +23,7 @@ int main() {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     });
-    lunar::Texture texture("../assets/wall.jpg");
+    lunar::Texture texture("../assets/wall.jpg", 0);
     texture.use();
     
     shader_program.use();

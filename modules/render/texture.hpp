@@ -7,6 +7,7 @@ namespace lunar{
 class Texture{
 public:
     Texture(const std::string &filename,
+    const unsigned int id,
     const unsigned int expand_param = GL_MIRRORED_REPEAT,
     const unsigned int filter_param_max = GL_LINEAR,
     const unsigned int filter_param_min = GL_NEAREST,
@@ -16,9 +17,10 @@ public:
     );
     ~Texture();
     void use();
-    unsigned int getID() {return texture;}
+    unsigned int getID() const {return id;}
+    std::string name;
 private:
-    unsigned int texture;
+    unsigned int texture, id;
     int width, height, nrChannels;
 };
 
