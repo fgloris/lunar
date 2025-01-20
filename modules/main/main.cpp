@@ -24,9 +24,6 @@ int main() {
         1, 2, 3  // second triangle
     });
 
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
     lunar::Texture texture1("../assets/container.jpg", 0);
     lunar::Texture texture2("../assets/awesomeface.png", 1,
@@ -43,7 +40,12 @@ int main() {
     shader_program.useTexture(texture2);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         shader_program.use();
+        unsigned int transformLoc = glGetUniformLocation(shader_program.getID(), "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         shader_program.draw();
         window.swapBuffers();
         window.pollEvents();
