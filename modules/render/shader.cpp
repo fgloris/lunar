@@ -88,7 +88,9 @@ namespace lunar {
 
     void ShaderProgram::draw() const {
         glUseProgram(program_id);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBindVertexArray(VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
     }
 

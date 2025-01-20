@@ -24,12 +24,13 @@ int main() {
         1, 2, 3  // second triangle
     });
     lunar::Texture texture("../assets/wall.jpg");
-    shader_program.use();
     texture.use();
+    
+    shader_program.use();
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
-        shader_program.use();
         texture.use();
+        shader_program.use();
         shader_program.draw();
         window.swapBuffers();
         window.pollEvents();
