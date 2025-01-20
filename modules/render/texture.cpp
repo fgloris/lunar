@@ -11,11 +11,13 @@ Texture::Texture(const std::string &filename,
     const unsigned int filter_param_min,
     const unsigned int texture_format,
     const unsigned int source_img_format,
-    bool generate_mitmap
+    bool generate_mitmap,
+    bool flip_y
     ):id(id){
     name = std::string("texture")+std::to_string(id);
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+    stbi_set_flip_vertically_on_load(flip_y);
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, expand_param);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, expand_param);

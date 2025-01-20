@@ -23,14 +23,20 @@ int main() {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     });
-    lunar::Texture texture1("../assets/wall.jpg", 0);
+
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+    lunar::Texture texture1("../assets/container.jpg", 0);
     lunar::Texture texture2("../assets/awesomeface.png", 1,
-                            GL_RGBA,
+                            GL_MIRRORED_REPEAT,
                             GL_LINEAR,
-                            GL_LINEAR,
+                            GL_NEAREST,
                             GL_RGBA,
                             GL_RGBA,
-                            false);
+                            false, 
+                            true);
     
     shader_program.use();
     shader_program.useTexture(texture1);

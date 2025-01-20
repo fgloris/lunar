@@ -1,5 +1,6 @@
 build/
 clion-build/
 .idea/
+package/
 3rdparties/fmt/
 3rdparties/googletest/

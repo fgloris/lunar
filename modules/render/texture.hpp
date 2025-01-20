@@ -13,7 +13,8 @@ public:
     const unsigned int filter_param_min = GL_NEAREST,
     const unsigned int texture_format = GL_RGB,
     const unsigned int source_img_format = GL_RGB,
-    bool generate_mitmap = true
+    bool generate_mitmap = true,
+    bool flip_y = false
     );
     ~Texture();
     void use() const;
