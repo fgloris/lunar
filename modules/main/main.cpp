@@ -38,14 +38,25 @@ int main() {
     shader_program.use();
     shader_program.useTexture(texture1);
     shader_program.useTexture(texture2);
+
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+    glm::mat4 projection = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), 
+                                static_cast<float>(window.getWidth()) / static_cast<float>(window.getHeight()),
+                                0.1f, 
+                                100.0f);
+    glm::mat4 transform;
     while (!window.shouldClose()) {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        transform = projection * view * model;
+
         glClear(GL_COLOR_BUFFER_BIT);
-        glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         shader_program.use();
-        unsigned int transformLoc = glGetUniformLocation(shader_program.getID(), "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        shader_program.setTransform(transform);
         shader_program.draw();
         window.swapBuffers();
         window.pollEvents();
