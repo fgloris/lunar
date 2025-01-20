@@ -23,14 +23,20 @@ int main() {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     });
-    lunar::Texture texture("../assets/wall.jpg", 0);
-    texture.use();
+    lunar::Texture texture1("../assets/wall.jpg", 0);
+    lunar::Texture texture2("../assets/awesomeface.png", 1,
+                            GL_RGBA,
+                            GL_LINEAR,
+                            GL_LINEAR,
+                            GL_RGBA,
+                            GL_RGBA,
+                            false);
     
     shader_program.use();
-    shader_program.useTexture(texture);
+    shader_program.useTexture(texture1);
+    shader_program.useTexture(texture2);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
-        texture.use();
         shader_program.use();
         shader_program.draw();
         window.swapBuffers();

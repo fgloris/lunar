@@ -16,7 +16,7 @@ public:
     bool generate_mitmap = true
     );
     ~Texture();
-    void use();
+    void use() const;
     unsigned int getID() const {return id;}
     std::string name;
 private:

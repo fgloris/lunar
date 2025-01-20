@@ -33,7 +33,7 @@ Texture::Texture(const std::string &filename,
     stbi_image_free(data);
 }
 
-void Texture::use(){
+void Texture::use() const {
     glActiveTexture(GL_TEXTURE0 + id);  // 始终使用纹理单元0
     glBindTexture(GL_TEXTURE_2D, texture);
 }

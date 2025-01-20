@@ -170,6 +170,11 @@ namespace lunar {
     }
 
     void ShaderProgram::useTexture(const Texture& texture) const {
+        texture.use();
         glUniform1i(glGetUniformLocation(program_id, texture.name.c_str()), texture.getID());
+    }
+
+    void ShaderProgram::setInt(const std::string &name, int value) const {
+        glUniform1i(glGetUniformLocation(program_id, name.c_str()), value);
     }
 }

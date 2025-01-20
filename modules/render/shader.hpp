@@ -26,6 +26,7 @@ namespace lunar {
         void setIndicies(std::vector<unsigned int> indicies);
         void setVertices(std::vector<float> vertices);
         void useTexture(const Texture& texture) const;
+        void setInt(const std::string &name, int value) const;
     private:
         void attachShaders(Shader& vertex_shader, Shader& fragment_shader);
         void bindBuffers();
