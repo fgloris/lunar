@@ -3,6 +3,7 @@ set(TEST_BINARY ${PROJECT_NAME}_test)
 
 add_executable(${TEST_BINARY}
     test_open_window.cpp
+    test_glm.cpp
 )
 
 target_link_libraries(${TEST_BINARY}

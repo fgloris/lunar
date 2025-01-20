@@ -22,7 +22,9 @@ namespace lunar {
         ~ShaderProgram();
         void use() const;
         void draw() const;
+        void setIndicies(std::vector<unsigned int> indicies);
         void setVertices(std::vector<float> vertices);
+        void setInt(const std::string &name, int value) const;
     private:
         void attachShaders(Shader& vertex_shader, Shader& fragment_shader);
         void bindBuffers();
