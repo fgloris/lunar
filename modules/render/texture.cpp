@@ -13,7 +13,7 @@ Texture::Texture(const std::string &filename,
     const unsigned int source_img_format,
     bool generate_mitmap
     ):id(id){
-    name = std::string("lunar_texture_")+std::to_string(id);
+    name = std::string("texture")+std::to_string(id);
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
@@ -34,7 +34,7 @@ Texture::Texture(const std::string &filename,
 }
 
 void Texture::use(){
-    glActiveTexture(GL_TEXTURE0);  // 始终使用纹理单元0
+    glActiveTexture(GL_TEXTURE0 + id);  // 始终使用纹理单元0
     glBindTexture(GL_TEXTURE_2D, texture);
 }
 

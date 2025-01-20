@@ -27,6 +27,7 @@ int main() {
     texture.use();
     
     shader_program.use();
+    shader_program.useTexture(texture);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT);
         texture.use();
