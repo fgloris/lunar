@@ -89,6 +89,7 @@ namespace lunar {
         glUseProgram(program_id);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBindVertexArray(VAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
     }
@@ -119,9 +120,18 @@ namespace lunar {
     }
 
     void ShaderProgram::setIndicies(std::vector<unsigned int> indicies){
-        this->ebo_indices = std::move(indicies);
+        ebo_indices = std::move(indicies);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->ebo_indices.size() * sizeof(unsigned int), &this->ebo_indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
+    }
+
+    void ShaderProgram::setSequentialIndicies(){
+        ebo_indices = std::vector<unsigned int>(vertices.size() / 5);
+        for (unsigned int i = 0; i < ebo_indices.size(); i++) {
+            ebo_indices[i] = i;
+        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
     }
 
     void ShaderProgram::bindBuffers() {

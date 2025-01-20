@@ -26,6 +26,7 @@ namespace lunar {
         void use() const;
         void draw() const;
         void setIndicies(std::vector<unsigned int> indicies);
+        void setSequentialIndicies();
         void setVertices(std::vector<float> vertices);
         void useTexture(const Texture& texture) const;
         void setTransform(const glm::mat4 &mat) const;
