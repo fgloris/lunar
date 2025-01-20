@@ -1,5 +1,4 @@
 #include "shader.hpp"
-#include "texture.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -88,14 +87,14 @@ namespace lunar {
 
     void ShaderProgram::draw() const {
         glUseProgram(program_id);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBindVertexArray(VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
     }
 
     void ShaderProgram::use() const {
         glUseProgram(program_id);
-        // 设置纹理采样器的uniform
-        setInt("texture1", 0);
     }
 
     void ShaderProgram::attachShaders(Shader& vertex_shader, Shader& fragment_shader){
@@ -168,6 +167,11 @@ namespace lunar {
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+    }
+
+    void ShaderProgram::useTexture(const Texture& texture) const {
+        texture.use();
+        glUniform1i(glGetUniformLocation(program_id, texture.name.c_str()), texture.getID());
     }
 
     void ShaderProgram::setInt(const std::string &name, int value) const {
