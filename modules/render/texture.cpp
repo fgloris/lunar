@@ -18,7 +18,7 @@ Texture::Texture(const std::string &filename,
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     stbi_set_flip_vertically_on_load(flip_y);
-    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nr_channels, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, expand_param);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, expand_param);
 

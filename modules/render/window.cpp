@@ -45,11 +45,37 @@ namespace lunar {
             throw std::runtime_error("Failed to create GLFW window");
         }
         glfwMakeContextCurrent(window);
+        glfwSetKeyCallback(window, keyCallback);
+        glfwSetCursorPosCallback(window, mouseCallback);
     }
 
     void Window::initGLAD() {
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             throw std::runtime_error("Failed to initialize GLAD");
+        }
+    }
+
+    void Window::processInput() {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, true);
+        }
+    }
+
+    void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (initialized) {
+            Window& instance = getInstance();
+            for (const auto& callback : instance.key_callbacks) {
+                callback(key, action);
+            }
+        }
+    }
+
+    void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+        if (initialized) {
+            Window& instance = getInstance();
+            for (const auto& callback : instance.mouse_callbacks) {
+                callback(xpos, ypos);
+            }
         }
     }
 } 

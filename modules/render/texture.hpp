@@ -22,7 +22,7 @@ public:
     std::string name;
 private:
     unsigned int texture, id;
-    int width, height, nrChannels;
+    int width, height, nr_channels;
 };
 
 }

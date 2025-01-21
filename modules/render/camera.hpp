@@ -8,14 +8,11 @@ namespace lunar{
 class Camera{
     public:
     Camera();
+    Camera(glm::vec3 camera_pos);
     ~Camera();
-    static Camera& getInstance();
-    glm::mat4 getViewMatrix() const {return view;}
-    glm::mat4 getProjectionMatrix() const {return projection;}
-    glm::mat4 getTransform() { return transform = projection * view; }
+    static Camera& getInstance(){ static Camera instance; return instance; }
     private:
-    glm::mat4 view;
-    glm::mat4 projection;
-    glm::mat4 transform;
+    glm::vec3 camera_pos, camera_front, camera_direction, camera_up, camera_right;
+    glm::mat4 view, projection;
 };
 }
