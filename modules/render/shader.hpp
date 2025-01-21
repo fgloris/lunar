@@ -39,6 +39,7 @@ namespace lunar {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(float), &this->vertices[0], GL_STATIC_DRAW);
         }
+        void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
         void useTexture(const Texture& texture) const;
         void setTransform(const glm::mat4 &mat) const;
         unsigned int getID() const {return program_id;}

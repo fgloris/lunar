@@ -13,6 +13,7 @@ int main() {
         return -1;
     }
     lunar::ShaderProgram shader_program;
+    shader_program.setVertexDataProperty({"position","color","texture"},{3,3,2});
     shader_program.setVertices<8>({
         {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
         { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},

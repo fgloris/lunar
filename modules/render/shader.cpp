@@ -74,8 +74,12 @@ namespace lunar {
         Shader vertex_shader(GL_VERTEX_SHADER);
         Shader fragment_shader(GL_FRAGMENT_SHADER);
         attachShaders(vertex_shader, fragment_shader);
+
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
+        glGenVertexArrays(1, &VAO);
+
         bindBuffers();
-        unbindBuffers();
     }
 
     ShaderProgram::~ShaderProgram() {
@@ -128,42 +132,28 @@ namespace lunar {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
     }
 
-    void ShaderProgram::bindBuffers() {
-        // VBO - 存储所有顶点数据
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-        // VAO - 配置如何解释数据
-        glGenVertexArrays(1, &VAO);
+    void ShaderProgram::setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
+        assert(names.size() == sizes.size());
         glBindVertexArray(VAO);
+        unsigned int stride = 0, offset = 0;
+        for (unsigned int i = 0; i < sizes.size(); i++) {
+            stride += sizes[i];
+        }
+        for (unsigned int i = 0; i < names.size(); i++) {
+            glVertexAttribPointer(i,                                // 位置属性的layout location
+                             sizes[i],                              // 3个float (xyz)
+                             GL_FLOAT,                              // 数据类型
+                             GL_FALSE,                              // 不需要归一化
+                             stride * sizeof(float),                // 步长：8个float (xyz + rgb + uv)
+                             (void*)(offset * sizeof(float)));      // 位置数据偏移量为0
+            glEnableVertexAttribArray(i);
+            offset += sizes[i];
+        }
+    }
 
-        // 配置位置属性
-        glVertexAttribPointer(0,                // 位置属性的layout location
-                             3,                 // 3个float (xyz)
-                             GL_FLOAT,          // 数据类型
-                             GL_FALSE,          // 不需要归一化
-                             8 * sizeof(float), // 步长：8个float (xyz + rgb + uv)
-                             (void*)0);         // 位置数据偏移量为0
-        glEnableVertexAttribArray(0);
-
-        // 配置颜色属性
-        glVertexAttribPointer(1,                // 颜色属性的layout location
-                             3,                 // 3个float (rgb)
-                             GL_FLOAT,          // 数据类型
-                             GL_FALSE,          // 不需要归一化
-                             8 * sizeof(float), // 步长：8个float
-                             (void*)(3 * sizeof(float))); // 颜色数据从第4个float开始
-        glEnableVertexAttribArray(1);
-
-        glVertexAttribPointer(2,
-                             2, 
-                             GL_FLOAT, 
-                             GL_FALSE, 
-                             8 * sizeof(float), 
-                             (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-
-        glGenBuffers(1, &EBO);
+    void ShaderProgram::bindBuffers() {
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     }
 
