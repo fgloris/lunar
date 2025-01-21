@@ -91,15 +91,12 @@ namespace lunar {
 
     void ShaderProgram::draw() const {
         glUseProgram(program_id);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, ebo_indices.size(), GL_UNSIGNED_INT, 0);
     }
 
     void ShaderProgram::use() const {
         glUseProgram(program_id);
+        bindBuffers();
     }
 
     void ShaderProgram::attachShaders(Shader& vertex_shader, Shader& fragment_shader){
@@ -151,13 +148,13 @@ namespace lunar {
         }
     }
 
-    void ShaderProgram::bindBuffers() {
+    void ShaderProgram::bindBuffers() const {
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     }
 
-    void ShaderProgram::unbindBuffers() {
+    void ShaderProgram::unbindBuffers() const {
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

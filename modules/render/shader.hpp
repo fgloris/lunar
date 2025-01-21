@@ -47,8 +47,8 @@ namespace lunar {
         void setInt(const std::string &name, int value) const;
         void setMat4(const std::string &name, const glm::mat4 &mat) const;
         void attachShaders(Shader& vertex_shader, Shader& fragment_shader);
-        void bindBuffers();
-        void unbindBuffers();
+        void bindBuffers() const;
+        void unbindBuffers() const;
 
         unsigned int vertex_data_size;
         std::vector<float> vertices;
