@@ -112,13 +112,7 @@ namespace lunar {
             throw std::runtime_error("ERROR: SHADER PROGRAM LINKING FAILED\n" + std::string(infoLog));
         }
     }
-
-    void ShaderProgram::setVertices(std::vector<float> vertices) {
-        this->vertices = std::move(vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(float), &this->vertices[0], GL_STATIC_DRAW);
-    }
-
+    
     void ShaderProgram::setIndicies(std::vector<unsigned int> indicies){
         ebo_indices = std::move(indicies);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
