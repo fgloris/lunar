@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
-#include <glad.h>
+#include <glad/glad.h>
 
 namespace lunar {
     Shader::Shader(int shader_type, const std::string& shader_code) : shader_type(shader_type) {

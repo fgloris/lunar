@@ -6,12 +6,17 @@ file(GLOB SRC_FILES *.cpp)
 set(SUB_LIBRARY_NAME render)
 add_library(${SUB_LIBRARY_NAME} STATIC ${SRC_FILES})
 
-target_include_directories(${SUB_LIBRARY_NAME} PUBLIC 
-    ${CMAKE_SOURCE_DIR}/3rdparties/stb_image
-    ${CMAKE_SOURCE_DIR}/3rdparties/glad
+target_include_directories(${SUB_LIBRARY_NAME} 
+    PUBLIC 
+        ${CMAKE_SOURCE_DIR}/modules
+        ${CMAKE_SOURCE_DIR}/3rdparties
 )
 
 target_link_libraries(${SUB_LIBRARY_NAME}
-    PRIVATE glad stb_image
-    PUBLIC glfw
+    PRIVATE 
+        glad
+        stb_image
+    PUBLIC 
+        glfw
+        interface
 )

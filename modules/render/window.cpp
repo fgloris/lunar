@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "interface/interface.hpp"
 #include <stdexcept>
 
 namespace lunar {

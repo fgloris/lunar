@@ -8,7 +8,7 @@ namespace lunar {
 enum Type {
     KEY,
     MOUSE_CLICK,
-    MOUSE_SC
+    MOUSE_SCROLL
 };
 
 struct Event {
@@ -34,11 +34,14 @@ struct Event {
 
 class Interface {
 public:
-    Interface();
+    Interface(std::string path);
     ~Interface();
     std::map<std::string, std::function<void(Event)>> callbacks;
 
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+
+private:
+    int convertKeyNameToGLFW(const std::string& key_name);
 };
 }
