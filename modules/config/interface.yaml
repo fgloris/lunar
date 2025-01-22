@@ -1,0 +1,15 @@
+keyboard_bindings:
+  - key: "GLFW_KEY_W"
+    callback: "move_forward"
+  - key: "GLFW_KEY_S"
+    callback: "move_backward"
+  - key: "GLFW_KEY_A"
+    callback: "move_left"
+  - key: "GLFW_KEY_D"
+    callback: "move_right"
+
+mouse_bindings:
+  - action: "look_around"
+    callback: "camera_rotate"
+  - action: "scroll"
+    callback: "camera_zoom"

@@ -78,5 +78,6 @@
         "ranges": "cpp",
         "cfenv": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "zencoder.enableRepoIndexing": true
 }

@@ -13,20 +13,35 @@ set(FETCHCONTENT_QUIET OFF)
 
 if (REFETCH OR NOT EXISTS ${CMAKE_SOURCE_DIR}/3rdparties/fmt)
     FetchContent_Declare(
-    fmt
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/3rdparties/fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
-    GIT_PROGRESS TRUE
+        fmt
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/3rdparties/fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+        GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
+        GIT_PROGRESS TRUE
     )
     FetchContent_MakeAvailable(fmt)
 else()
     add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparties/fmt)
 endif()
 
+
+if (REFETCH OR NOT EXISTS ${CMAKE_SOURCE_DIR}/3rdparties/yaml-cpp)
+    FetchContent_Declare(
+        yaml-cpp
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/3rdparties/yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG 73ef0060aaa1a9dc742c1d8a36fa336b35e94035 # 0.8.0
+        GIT_PROGRESS TRUE
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+else()
+    add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparties/yaml-cpp)
+endif()
+
 add_subdirectory(3rdparties/glad)
 add_subdirectory(3rdparties/stb_image)
 add_subdirectory(modules/render)
+add_subdirectory(modules/interface)
 
 if(NOT DEBUG OR NDEBUG)
     add_compile_definitions(NDEBUG)
