@@ -14,9 +14,9 @@ namespace lunar {
     class Shader {
     public:
         Shader(int shader_type, const std::string& shader_path);
-        Shader(int shader_type);
+        explicit Shader(int shader_type);
         ~Shader();
-        unsigned int getID() const { return shader_id; }
+        [[nodiscard]] unsigned int getID() const { return shader_id; }
         friend class ShaderProgram;
     private:
         unsigned int shader_type;
@@ -30,8 +30,8 @@ namespace lunar {
         ~ShaderProgram();
         void use() const;
         void draw() const;
-        void setIndicies(std::vector<unsigned int> indicies);
-        void setSequentialIndicies();
+        void setIndices(std::vector<unsigned int> indices);
+        void setSequentialIndices();
         template<unsigned int N>
         void setVertices(std::vector<VertexData<N>> vertices){
             const float* raw_data = reinterpret_cast<const float*>(vertices.data());
@@ -42,7 +42,7 @@ namespace lunar {
         void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
         void useTexture(const Texture& texture) const;
         void setTransform(const glm::mat4 &mat) const;
-        unsigned int getID() const {return program_id;}
+        [[nodiscard]] unsigned int getID() const {return program_id;}
     private:
         void setInt(const std::string &name, int value) const;
         void setMat4(const std::string &name, const glm::mat4 &mat) const;

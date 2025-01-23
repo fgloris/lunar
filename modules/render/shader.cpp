@@ -114,13 +114,13 @@ namespace lunar {
         }
     }
     
-    void ShaderProgram::setIndicies(std::vector<unsigned int> indicies){
-        ebo_indices = std::move(indicies);
+    void ShaderProgram::setIndices(std::vector<unsigned int> indices){
+        ebo_indices = std::move(indices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
     }
 
-    void ShaderProgram::setSequentialIndicies(){
+    void ShaderProgram::setSequentialIndices(){
         ebo_indices = std::vector<unsigned int>(vertices.size() / 5);
         for (unsigned int i = 0; i < ebo_indices.size(); i++) {
             ebo_indices[i] = i;

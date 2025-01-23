@@ -58,7 +58,7 @@ int main() {
         {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
         {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f}
     });
-    shader_program.setSequentialIndicies();
+    shader_program.setSequentialIndices();
 
     lunar::Texture texture1("../assets/container.jpg", 0);
     lunar::Texture texture2("../assets/awesomeface.png", 1,

@@ -9,7 +9,9 @@ keyboard_bindings:
     callback: "move_right"
 
 mouse_bindings:
-  - action: "look_around"
+  - action: "GLFW_MOUSE_BUTTON_LEFT"
     callback: "camera_rotate"
-  - action: "scroll"
+  - action: "GLFW_MOUSE_BUTTON_RIGHT"
     callback: "camera_zoom"
+  - action: "GLFW_MOUSE_BUTTON_MIDDLE"
+    callback: "camera_move"

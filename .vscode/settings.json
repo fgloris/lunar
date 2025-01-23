@@ -77,7 +77,9 @@
         "future": "cpp",
         "ranges": "cpp",
         "cfenv": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.ipp": "cpp",
+        "*.txx": "cpp"
     },
     "zencoder.enableRepoIndexing": true
 }
