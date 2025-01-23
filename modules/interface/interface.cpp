@@ -23,7 +23,7 @@ namespace lunar {
     }
 }
 
-void Interface::bindCallbacks(const std::string& config_path, GLFWwindow* window) {
+void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* window) {
     try {
         YAML::Node config = YAML::LoadFile(config_path);
         
@@ -51,18 +51,18 @@ void Interface::bindCallbacks(const std::string& config_path, GLFWwindow* window
     }
     glfwSetKeyCallback(window, keyCallback);
     glfwSetMouseButtonCallback(window, mouseButtonCallback);
-    //glfwSetScrollCallback(window, mouseScrollCallback);
-    //glfwSetCursorPosCallback(window, mouseMoveCallback);
+    glfwSetScrollCallback(window, mouseScrollCallback);
+    glfwSetCursorPosCallback(window, mouseMoveCallback);
     bound = true;
 }
 
-void Interface::registerCallback(const std::string& name, std::function<void(Event)> callback) {
+void Interface::registerCallback(const std::string& name, EventCallbackFunction callback) {
     all_callbacks[name] = callback;
 }
 
 void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     auto& registered_callbacks = Interface::getInstance().registered_callbacks;
-    Event event = {EventType::KEY, {key, scancode, action, mods}};
+    Event event = {.type = EventType::KEY, .data = {.key = {key, scancode, action, mods}}};
     if (registered_callbacks.find(key) != registered_callbacks.end()) {
         registered_callbacks[key](event);
     }
@@ -70,10 +70,32 @@ void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int actio
 
 void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     auto& registered_callbacks = Interface::getInstance().registered_callbacks;
-    Event event = {EventType::MOUSE_CLICK, {button, action, mods}};
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {button, action, mods, xpos, ypos}}};
     if (registered_callbacks.find(button) != registered_callbacks.end()) {
         registered_callbacks[button](event);
     }
+}
+
+void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset){
+    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
+    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_move_or_scroll = {xoffset, yoffset}}};
+    if (registered_callbacks.find(static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)) != registered_callbacks.end()) {
+        registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)](event);
+    }
+}
+
+void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
+    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
+    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move_or_scroll = {xpos, ypos}}};
+    if (registered_callbacks.find(static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)) != registered_callbacks.end()) {
+        registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)](event);
+    }
+}
+
+void Interface::debugCallback(const Event& event){
+    std::cout << event.what() << std::endl;
 }
 
 Interface::~Interface() {

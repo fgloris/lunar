@@ -68,7 +68,7 @@ int main() {
                             GL_NEAREST,
                             GL_RGBA,
                             GL_RGBA,
-                            false, 
+                            false,
                             true);
     
     shader_program.use();
@@ -78,8 +78,10 @@ int main() {
     lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     lunar::Interface& interface = lunar::Interface::getInstance();
-    interface.registerCallback("camera_move", std::bind(&lunar::Camera::Move, &camera, std::placeholders::_1));
-    interface.bindCallbacks("../modules/config/interface.yaml", window.getHandle());
+    interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
+    interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

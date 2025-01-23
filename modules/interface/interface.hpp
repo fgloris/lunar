@@ -6,26 +6,30 @@
 
 namespace lunar {
 enum class EventType {
-    KEY,
-    MOUSE_CLICK,
-    MOUSE_MOVE,
-    MOUSE_SCROLL,
-    EMPTY,
+    KEY = 0,
+    MOUSE_CLICK = 1,
+    MOUSE_MOVE = 2,
+    MOUSE_SCROLL = 3,
 };
 
-using EventIdentifier = unsigned short;
+enum class LUNAR_EVENT{
+    LUNAR_MOUSE_SCROLL = 1000,
+    LUNAR_MOUSE_MOVE = 1001,
+};
 
 struct Event {
     EventType type;
     union {
         struct {
             int key;
-            int action;
             int scancode;
+            int action;
             int mods;
         } key;
         struct {
             int button;
+            int action;
+            int mods;
             double xpos;
             double ypos;
         } mouse_click;
@@ -37,24 +41,28 @@ struct Event {
     [[nodiscard]] std::string what() const;
 };
 
+using EventIdentifier = unsigned short;
+using EventCallbackFunction = std::function<void(const Event&)>;
+
 class Interface {
 public:
     ~Interface();
-    std::map<std::string, std::function<void(Event)>> all_callbacks;
-    std::map<EventIdentifier, std::function<void(Event)>> registered_callbacks;
+    std::map<std::string, EventCallbackFunction> all_callbacks;
+    std::map<EventIdentifier, EventCallbackFunction> registered_callbacks;
 
     static Interface& getInstance() {
         static Interface instance;
         return instance;
     }
-    void bindCallbacks(const std::string& path, GLFWwindow* window);
-    void registerCallback(const std::string& name, std::function<void(Event)> callback);
+    void bindAllCallbacks(const std::string& path, GLFWwindow* window);
+    void registerCallback(const std::string& name, EventCallbackFunction callback);
 
     inline static bool bound = false;
     inline static bool registered = false;
 private:
     Interface() = default;
     static EventIdentifier convertKeyNameToEventIndetifier(const std::string& key_name);
+    static void debugCallback(const Event& event);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);

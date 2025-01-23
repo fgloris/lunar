@@ -16,14 +16,16 @@ class Camera{
     [[nodiscard]] glm::mat4 computeViewMatrix() const;
     [[nodiscard]] glm::mat4 computeProjectionMatrix() const;
     [[nodiscard]] glm::vec3 computeTransformMatrix() const;
-    void Zoom(Event event);
-    void Rotate(Event event);
-    void Move(Event event);
+    void Zoom(const Event& event);
+    void Rotate(const Event& event);
+    void MoveForward(const Event& event);
+    void MoveBackward(const Event& event);
+    
     inline static float zoom_speed = 1.0f;
     inline static float rotate_speed = 1.0f;
     inline static float move_speed = 1.0f;
     private:
     float zoom;
-    glm::vec3 camera_pos, camera_front, camera_direction, camera_up, camera_right;
+    glm::vec3 camera_pos, camera_direction, camera_up, camera_right;
 };
 }

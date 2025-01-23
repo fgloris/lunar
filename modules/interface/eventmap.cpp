@@ -149,6 +149,9 @@ EventIdentifier Interface::convertKeyNameToEventIndetifier(const std::string& ke
         {"GLFW_MOUSE_BUTTON_7", GLFW_MOUSE_BUTTON_7},
         {"GLFW_MOUSE_BUTTON_8", GLFW_MOUSE_BUTTON_8},
         {"GLFW_MOUSE_BUTTON_LAST", GLFW_MOUSE_BUTTON_LAST},
+
+        {"LUNAR_MOUSE_SCROLL", static_cast<int>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)},
+        {"LUNAR_MOUSE_MOVE", static_cast<int>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)}
     };
     
     auto it = key_map.find(key_name);
