@@ -13,13 +13,7 @@ enum class EventType {
     EMPTY,
 };
 
-struct EventIdentifier {
-    EventType type;
-    int value;
-    bool operator<(const EventIdentifier& other) const {
-        return type < other.type || (type == other.type && value < other.value);
-    }
-};
+using EventIdentifier = unsigned short;
 
 struct Event {
     EventType type;
@@ -53,12 +47,14 @@ public:
         static Interface instance;
         return instance;
     }
-    void init(const std::string& path, GLFWwindow* window);
+    void bindCallbacks(const std::string& path, GLFWwindow* window);
+    void registerCallback(const std::string& name, std::function<void(Event)> callback);
 
-    inline static bool initialized = false;
+    inline static bool bound = false;
+    inline static bool registered = false;
 private:
     Interface() = default;
-    static int convertKeyNameToGLFW(const std::string& key_name);
+    static EventIdentifier convertKeyNameToEventIndetifier(const std::string& key_name);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);

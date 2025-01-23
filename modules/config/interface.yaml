@@ -1,17 +1,16 @@
-keyboard_bindings:
-  - key: "GLFW_KEY_W"
-    callback: "move_forward"
-  - key: "GLFW_KEY_S"
-    callback: "move_backward"
-  - key: "GLFW_KEY_A"
-    callback: "move_left"
-  - key: "GLFW_KEY_D"
-    callback: "move_right"
-
-mouse_bindings:
-  - action: "GLFW_MOUSE_BUTTON_LEFT"
+keyboard_and_mouse_bindings:
+  #- key: "GLFW_KEY_W"
+  #  callback: "move_forward"
+  #- key: "GLFW_KEY_S"
+  #  callback: "move_backward"
+  #- key: "GLFW_KEY_A"
+  #  callback: "move_left"
+  #- key: "GLFW_KEY_D"
+  #  callback: "move_right"
+    
+  - key: "GLFW_MOUSE_BUTTON_LEFT"
     callback: "camera_rotate"
-  - action: "GLFW_MOUSE_BUTTON_RIGHT"
-    callback: "camera_zoom"
-  - action: "GLFW_MOUSE_BUTTON_MIDDLE"
-    callback: "camera_move"
+  #- key: "GLFW_MOUSE_BUTTON_RIGHT"
+  #  callback: "camera_zoom"
+  #- key: "GLFW_MOUSE_BUTTON_MIDDLE"
+  #  callback: "camera_move"
