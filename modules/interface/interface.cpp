@@ -87,7 +87,7 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
     auto& instance = Interface::getInstance();
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {.button = (unsigned short)button, .action = (unsigned short)action, .mods = (unsigned short)mods, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos}}};
+    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {.button = (unsigned short)button, .action = (unsigned short)action, .mods = (unsigned short)mods, .xpos = (float)xpos, .ypos = (float)ypos}}};
     if (instance.registered_callbacks.find(button) != instance.registered_callbacks.end()) {
         EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[button];
         if ((callback_with_mod.second & mods) == callback_with_mod.second){
@@ -98,7 +98,7 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset){
     auto& instance = Interface::getInstance();
-    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {.xoffset = (unsigned short)xoffset, .yoffset = (unsigned short)yoffset}}};
+    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {.xoffset = (short)xoffset, .yoffset = (short)yoffset}}};
     static unsigned short scroll_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL);
     unsigned short mods = getModifier(window);
     if (instance.registered_callbacks.find(scroll_ident) != instance.registered_callbacks.end()) {
@@ -114,7 +114,7 @@ void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
     static unsigned short move_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE);
     unsigned short mouse_button_state = getMouseButtonState(window);
 
-    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.mouse_button_state = mouse_button_state, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos, .xoffset = (unsigned short)(xpos-instance.mouse_x_pos), .yoffset = (unsigned short)(ypos-instance.mouse_y_pos)}}};
+    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.mouse_button_state = mouse_button_state, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos, .xoffset = (short)(xpos-instance.mouse_x_pos), .yoffset = (short)(ypos-instance.mouse_y_pos)}}};
     unsigned short mods = getModifier(window);
     if (instance.registered_callbacks.find(move_ident) != instance.registered_callbacks.end()) {
         EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[move_ident];

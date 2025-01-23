@@ -37,12 +37,12 @@ struct Event {
             unsigned short mouse_button_state;
             unsigned short xpos;
             unsigned short ypos;
-            unsigned short xoffset;
-            unsigned short yoffset;
+            short xoffset;
+            short yoffset;
         } mouse_move;
         struct {
-            unsigned short xoffset;
-            unsigned short yoffset;
+            short xoffset;
+            short yoffset;
         } mouse_scroll;
     } data;
     [[nodiscard]] std::string what() const;
