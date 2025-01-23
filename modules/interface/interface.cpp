@@ -31,6 +31,11 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
             for (const auto& binding : config["keyboard_and_mouse_bindings"]) {
                 std::string key_name = binding["key"].as<std::string>();
                 std::string callback_name = binding["callback"].as<std::string>();
+                
+                unsigned short mod = 0;
+                if (binding["mod"].IsDefined()){
+                    mod = convertKeyNameToEventIndetifier(binding["mod"].as<std::string>());
+                }
 
                 if (callback_name == "empty") {
                     continue;

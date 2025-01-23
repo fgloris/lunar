@@ -25,7 +25,7 @@ class Camera{
     inline static float rotate_speed = 0.001f;
     inline static float move_speed = 1.0f;
     private:
-    float zoom;
+    double zoom;
     glm::vec3 camera_pos, camera_direction, camera_up, camera_right;
 };
 }

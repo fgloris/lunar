@@ -23,7 +23,7 @@ namespace lunar{
             throw std::runtime_error("Window not initialized");
         }else {
             Window& w = Window::getInstance();
-            return glm::perspective(glm::radians(zoom), static_cast<float>(w.getWidth()) / static_cast<float>(w.getHeight()), 0.1f, 100.0f);
+            return glm::perspective(glm::radians(static_cast<float>(zoom)), static_cast<float>(w.getWidth()) / static_cast<float>(w.getHeight()), 0.1f, 100.0f);
         }
     }
 
@@ -35,7 +35,7 @@ namespace lunar{
         switch (event.type){
             case EventType::MOUSE_MOVE:
             case EventType::MOUSE_SCROLL:
-                camera_pos -= (float)(event.data.mouse_scroll.yoffset * move_speed) * camera_direction;
+                camera_pos -= static_cast<float>(event.data.mouse_scroll.yoffset * move_speed) * camera_direction;
                 break;
             case EventType::KEY:
             case EventType::MOUSE_CLICK:
@@ -90,7 +90,7 @@ namespace lunar{
         switch (event.type){
             case EventType::MOUSE_MOVE:
             case EventType::MOUSE_SCROLL:
-                camera_pos -= (float)(event.data.mouse_scroll.xoffset * move_speed) * camera_right;
+                camera_pos -= static_cast<float>(event.data.mouse_scroll.xoffset * move_speed) * camera_right;
                 break;
             case EventType::KEY:
                 if (event.data.key.action == GLFW_PRESS || event.data.key.action == GLFW_REPEAT){
