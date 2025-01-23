@@ -8,9 +8,9 @@ keyboard_and_mouse_bindings:
   #- key: "GLFW_KEY_D"
   #  callback: "move_right"
     
-  - key: "GLFW_MOUSE_BUTTON_LEFT"
-    callback: "camera_rotate"
+  #- key: "GLFW_MOUSE_BUTTON_LEFT"
+  #  callback: "camera_rotate"
   #- key: "GLFW_MOUSE_BUTTON_RIGHT"
   #  callback: "camera_zoom"
-  #- key: "GLFW_MOUSE_BUTTON_MIDDLE"
-  #  callback: "camera_move"
+  - key: "GLFW_MOUSE_BUTTON_MIDDLE"
+    callback: "camera_move"

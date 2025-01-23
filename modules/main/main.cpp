@@ -4,6 +4,7 @@
 #include "render/texture.hpp"
 #include "interface/interface.hpp"
 #include <iostream>
+#include <functional>
 
 int main() {
     auto& window = lunar::Window::getInstance();
@@ -77,9 +78,7 @@ int main() {
     lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     lunar::Interface& interface = lunar::Interface::getInstance();
-    interface.registerCallback("camera_rotate", [](lunar::Event event) {
-        std::cout << "camera_rotate" << std::endl;
-    });
+    interface.registerCallback("camera_move", std::bind(&lunar::Camera::Move, &camera, std::placeholders::_1));
     interface.bindCallbacks("../modules/config/interface.yaml", window.getHandle());
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
