@@ -34,12 +34,15 @@ struct Event {
             double ypos;
         } mouse_click;
         struct {
+            //int button;
+            //int mods;
             double xpos;
             double ypos;
             double xoffset;
             double yoffset;
         } mouse_move;
         struct {
+            //int mods;
             double xoffset;
             double yoffset;
         } mouse_scroll;
@@ -49,12 +52,14 @@ struct Event {
 
 using EventIdentifier = unsigned short;
 using EventCallbackFunction = std::function<void(const Event&)>;
+using EventCallbackFuncWithMod = std::pair<EventCallbackFunction, unsigned short>;
 
 class Interface {
 public:
     ~Interface();
     std::map<std::string, EventCallbackFunction> all_callbacks;
     std::map<EventIdentifier, EventCallbackFunction> registered_callbacks;
+    std::map<EventIdentifier, EventCallbackFuncWithMod> registered_callbacks_with_mod;
 
     static Interface& getInstance() {
         static Interface instance;
@@ -74,6 +79,7 @@ private:
     static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
     static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
     static void mouseEnterCallback(GLFWwindow* window, int entered);
+    static unsigned short getModifier(GLFWwindow* window);
 
     double mouse_x_pos, mouse_y_pos;
     bool reset_mouse_position_upon_enter_window = false;

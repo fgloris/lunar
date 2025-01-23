@@ -38,6 +38,10 @@ namespace lunar{
                 camera_pos -= static_cast<float>(event.data.mouse_scroll.yoffset * move_speed) * camera_direction;
                 break;
             case EventType::KEY:
+                if (event.data.key.action == GLFW_PRESS || event.data.key.action == GLFW_REPEAT){
+                    camera_pos -= 0.1f * move_speed * camera_direction;
+                }
+                break;
             case EventType::MOUSE_CLICK:
                 camera_pos -= 0.1f * move_speed * camera_direction;
                 break;

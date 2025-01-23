@@ -32,21 +32,22 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
                 std::string key_name = binding["key"].as<std::string>();
                 std::string callback_name = binding["callback"].as<std::string>();
                 
-                unsigned short mod = 0;
-                if (binding["mod"].IsDefined()){
-                    mod = convertKeyNameToEventIndetifier(binding["mod"].as<std::string>());
-                }
-
                 if (callback_name == "empty") {
                     continue;
                 }
-
-                const EventIdentifier event_identifier = convertKeyNameToEventIndetifier(key_name);
-                
-                if (all_callbacks.find(callback_name) != all_callbacks.end()) {
-                    registered_callbacks[event_identifier] = all_callbacks[callback_name];
-                } else {
+                if (all_callbacks.find(callback_name) == all_callbacks.end()) {
                     throw std::runtime_error("Callback not found: " + callback_name);
+                }
+                const EventIdentifier event_identifier = convertKeyNameToEventIndetifier(key_name);
+
+                if (binding["mod"].IsDefined()){
+                    unsigned short mod_value = 0;
+                    for (const auto& mod : binding["mod"]){
+                        mod_value |= convertKeyNameToEventIndetifier(mod.as<std::string>());
+                    }
+                    registered_callbacks_with_mod[event_identifier] = std::make_pair(all_callbacks[callback_name], mod_value);
+                }else{
+                    registered_callbacks[event_identifier] = all_callbacks[callback_name];
                 }
             }
         }
@@ -72,30 +73,61 @@ void Interface::registerCallback(const std::string& name, EventCallbackFunction 
 }
 
 void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
+    auto& instance = Interface::getInstance();
     Event event = {.type = EventType::KEY, .data = {.key = {key, scancode, action, mods}}};
-    registered_callbacks[key](event);
+    if (instance.registered_callbacks.find(key) != instance.registered_callbacks.end()) {
+        instance.registered_callbacks[key](event);
+    }else if (instance.registered_callbacks_with_mod.find(key) != instance.registered_callbacks_with_mod.end()) {
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[key];
+        if (callback_with_mod.second & mods == callback_with_mod.second){
+            callback_with_mod.first(event);
+        }
+    }
 }
 
 void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
+    auto& instance = Interface::getInstance();
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {button, action, mods, xpos, ypos}}};
-    registered_callbacks[button](event);
+    if (instance.registered_callbacks.find(button) != instance.registered_callbacks.end()) {
+        instance.registered_callbacks[button](event);
+    }else if (instance.registered_callbacks_with_mod.find(button) != instance.registered_callbacks_with_mod.end()) {
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[button];
+        if (callback_with_mod.second & mods == callback_with_mod.second){
+            callback_with_mod.first(event);
+        }
+    }
 }
 
 void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset){
-    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
+    auto& instance = Interface::getInstance();
     Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {xoffset, yoffset}}};
-    registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)](event);
+    static unsigned short scroll_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL);
+    unsigned short mods = getModifier(window);
+    if (instance.registered_callbacks.find(scroll_ident) != instance.registered_callbacks.end()) {
+        instance.registered_callbacks[scroll_ident](event);
+    }else if (instance.registered_callbacks_with_mod.find(scroll_ident) != instance.registered_callbacks_with_mod.end()) {
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[scroll_ident];
+        if (callback_with_mod.second & mods == callback_with_mod.second){
+            callback_with_mod.first(event);
+        }
+    }
 }
 
 void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
     auto& instance = Interface::getInstance();
-    auto& registered_callbacks = instance.registered_callbacks;
+    static unsigned short move_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE);
     Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.xpos = xpos, .ypos = ypos, .xoffset = xpos-instance.mouse_x_pos, .yoffset = ypos-instance.mouse_y_pos}}};
-    registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)](event);
+    unsigned short mods = getModifier(window);
+    if (instance.registered_callbacks.find(move_ident) != instance.registered_callbacks.end()) {
+        instance.registered_callbacks[move_ident](event);
+    }else if (instance.registered_callbacks_with_mod.find(move_ident) != instance.registered_callbacks_with_mod.end()) {
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[move_ident];
+        if (callback_with_mod.second & mods == callback_with_mod.second){
+            callback_with_mod.first(event);
+        }
+    }
     instance.mouse_x_pos = xpos;
     instance.mouse_y_pos = ypos;
 }
@@ -107,6 +139,19 @@ void Interface::mouseEnterCallback(GLFWwindow* window, int entered){
             glfwGetCursorPos(window, &instance.mouse_x_pos, &instance.mouse_y_pos);
         }
     }
+}
+
+unsigned short Interface::getModifier(GLFWwindow* window){
+    unsigned short mods = 0;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+        mods |= GLFW_MOD_SHIFT;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
+        mods |= GLFW_MOD_CONTROL;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS)
+        mods |= GLFW_MOD_ALT;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SUPER) == GLFW_PRESS)
+        mods |= GLFW_MOD_SUPER;
+    return mods;
 }
 
 void Interface::debugCallback(const Event& event){
