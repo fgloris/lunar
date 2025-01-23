@@ -113,6 +113,7 @@ namespace lunar{
 
     void Camera::Rotate(const Event& event){
         camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.xoffset * rotate_speed), camera_up));
+        camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.yoffset * rotate_speed), camera_right));
         camera_right = glm::normalize(glm::cross(camera_up, camera_direction));
         camera_up = glm::normalize(glm::cross(camera_direction, camera_right));
     }

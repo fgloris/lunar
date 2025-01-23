@@ -17,7 +17,8 @@ enum class LUNAR_EVENT{
     LUNAR_MOUSE_MOVE = 1001,
 };
 
-struct Event {
+struct Event {// 16 bytes
+    //data size was compressed for faster tranferring.
     EventType type;
     union {
         struct {

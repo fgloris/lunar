@@ -39,6 +39,9 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
                     throw std::runtime_error("Callback not found: " + callback_name);
                 }
                 const EventIdentifier event_identifier = convertKeyNameToEventIndetifier(key_name);
+                if (registered_callbacks.find(event_identifier) != registered_callbacks.end()){
+                    throw std::runtime_error("Callback already registered: " + callback_name + " for key: " + key_name);
+                }
 
                 if (binding["mod"].IsDefined()){
                     unsigned short mod_value = 0;
@@ -69,7 +72,11 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
 }
 
 void Interface::registerCallback(const std::string& name, EventCallbackFunction callback) {
+    if (all_callbacks.find(name) != all_callbacks.end()){
+        throw std::runtime_error("Callback already registered: " + name);
+    }
     all_callbacks[name] = callback;
+    registered = true;
 }
 
 void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -87,7 +94,7 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
     auto& instance = Interface::getInstance();
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {.button = (unsigned short)button, .action = (unsigned short)action, .mods = (unsigned short)mods, .xpos = (float)xpos, .ypos = (float)ypos}}};
+    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {.button = (unsigned short)button, .action = (unsigned short)action, .mods = (unsigned short)mods, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos}}};
     if (instance.registered_callbacks.find(button) != instance.registered_callbacks.end()) {
         EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[button];
         if ((callback_with_mod.second & mods) == callback_with_mod.second){
@@ -124,7 +131,6 @@ void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
     }
     instance.mouse_x_pos = xpos;
     instance.mouse_y_pos = ypos;
-    std::cout << xpos << " " << ypos << std::endl;
 }
 
 void Interface::mouseEnterCallback(GLFWwindow* window, int entered){

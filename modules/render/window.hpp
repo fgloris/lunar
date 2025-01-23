@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace lunar {
+    struct Event;
     class Window {
     public:
         Window(const Window&) = delete;
@@ -23,20 +24,22 @@ namespace lunar {
         [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(window); }
         void swapBuffers() const { glfwSwapBuffers(window); }
 
-        void pollEvents() { glfwPollEvents(); processInput(); }
+        void pollEvents() { glfwPollEvents();}
 
         [[nodiscard]] GLFWwindow* getHandle() const { return window; }
         int getWidth() const { return width; }
         int getHeight() const { return height; }
 
         inline static bool initialized = false;
+        void close(const Event& event) {glfwSetWindowShouldClose(getInstance().getHandle(), true);}
+        void fullscreen(const Event& event);
+        void windowed(const Event& event);
     private:
         Window() = default;
         ~Window();
         void initGLFW();
         void initWindow();
         void initGLAD();
-        void processInput();
 
         GLFWwindow* window{nullptr};
         int width{0}, height{0};

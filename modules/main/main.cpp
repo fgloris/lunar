@@ -78,6 +78,10 @@ int main() {
     lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     lunar::Interface& interface = lunar::Interface::getInstance();
+
+    interface.registerCallback("window_close", std::bind(&lunar::Window::close, &window, std::placeholders::_1));
+    interface.registerCallback("window_fullscreen", std::bind(&lunar::Window::fullscreen, &window, std::placeholders::_1));
+    interface.registerCallback("window_windowed", std::bind(&lunar::Window::windowed, &window, std::placeholders::_1));
     interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, &camera, std::placeholders::_1));
     interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, &camera, std::placeholders::_1));
     interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::MoveLeft, &camera, std::placeholders::_1));
@@ -88,8 +92,6 @@ int main() {
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
-    std::cout << sizeof(lunar::Event) << std::endl;
-    std::cout << sizeof(lunar::EventType) << std::endl;
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

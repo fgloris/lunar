@@ -46,8 +46,6 @@ namespace lunar {
             throw std::runtime_error("Failed to create GLFW window");
         }
         glfwMakeContextCurrent(window);
-        //glfwSetKeyCallback(window, keyCallback);
-        //glfwSetCursorPosCallback(window, mouseCallback);
     }
 
     void Window::initGLAD() {
@@ -56,9 +54,20 @@ namespace lunar {
         }
     }
 
-    void Window::processInput() {
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, true);
-        }
+    void Window::fullscreen(const Event& event) {
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        width = mode->width;
+        height = mode->height;
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        glViewport(0, 0, width, height);
+        isFullscreen = true;
+    }
+
+    void Window::windowed(const Event& event) {
+        width = 1920;
+        height = 1080;
+        glfwSetWindowMonitor(window, nullptr, 0, 0, width, height, GLFW_DONT_CARE);
+        isFullscreen = false;
     }
 } 
