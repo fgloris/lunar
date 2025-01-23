@@ -1,6 +1,10 @@
 #include "camera.hpp"
 #include "window.hpp"
 #include "interface/interface.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 
 namespace lunar{
@@ -24,14 +28,14 @@ namespace lunar{
     }
 
     void Camera::Zoom(const Event& event){
-        zoom -= event.data.mouse_move_or_scroll.ypos * zoom_speed;
+        zoom -= event.data.mouse_scroll.yoffset * zoom_speed;
     }
 
     void Camera::MoveForward(const Event& event){
         switch (event.type){
             case EventType::MOUSE_MOVE:
             case EventType::MOUSE_SCROLL:
-                camera_pos -= (float)(event.data.mouse_move_or_scroll.ypos * move_speed) * camera_direction;
+                camera_pos -= (float)(event.data.mouse_scroll.yoffset * move_speed) * camera_direction;
                 break;
             case EventType::KEY:
             case EventType::MOUSE_CLICK:
@@ -45,7 +49,7 @@ namespace lunar{
         switch (event.type){
             case EventType::MOUSE_MOVE:
             case EventType::MOUSE_SCROLL:
-                camera_pos += (float)(event.data.mouse_move_or_scroll.ypos * move_speed) * camera_direction;
+                camera_pos += (float)(event.data.mouse_scroll.yoffset * move_speed) * camera_direction;
                 break;
             case EventType::KEY:
                 if (event.data.key.action == GLFW_PRESS || event.data.key.action == GLFW_REPEAT){
@@ -53,7 +57,6 @@ namespace lunar{
                 }
                 break;
             case EventType::MOUSE_CLICK:
-                std::cout << event.data.mouse_click.action << std::endl;
                 if (event.data.mouse_click.action == GLFW_PRESS){
                     camera_pos += 0.1f * move_speed * camera_direction;
                 }
@@ -62,4 +65,52 @@ namespace lunar{
                 break;
         }
     }
+    void Camera::MoveLeft(const Event& event){
+        switch (event.type){
+            case EventType::MOUSE_MOVE:
+            case EventType::MOUSE_SCROLL:
+                camera_pos += (float)(event.data.mouse_scroll.xoffset * move_speed) * camera_right;
+                break;
+            case EventType::KEY:
+                if (event.data.key.action == GLFW_PRESS || event.data.key.action == GLFW_REPEAT){
+                    camera_pos += 0.1f * move_speed * camera_right;
+                }
+                break;
+            case EventType::MOUSE_CLICK:
+                if (event.data.mouse_click.action == GLFW_PRESS){
+                    camera_pos += 0.1f * move_speed * camera_right;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    void Camera::MoveRight(const Event& event){
+        switch (event.type){
+            case EventType::MOUSE_MOVE:
+            case EventType::MOUSE_SCROLL:
+                camera_pos -= (float)(event.data.mouse_scroll.xoffset * move_speed) * camera_right;
+                break;
+            case EventType::KEY:
+                if (event.data.key.action == GLFW_PRESS || event.data.key.action == GLFW_REPEAT){
+                    camera_pos -= 0.1f * move_speed * camera_right;
+                }
+                break;
+            case EventType::MOUSE_CLICK:
+                if (event.data.mouse_click.action == GLFW_PRESS){
+                    camera_pos -= 0.1f * move_speed * camera_right;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    void Camera::Rotate(const Event& event){
+        camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.xoffset * rotate_speed), camera_up));
+        camera_right = glm::normalize(glm::cross(camera_up, camera_direction));
+        camera_up = glm::normalize(glm::cross(camera_direction, camera_right));
+    }
+    
 }

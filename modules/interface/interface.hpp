@@ -36,7 +36,13 @@ struct Event {
         struct {
             double xpos;
             double ypos;
-        } mouse_move_or_scroll;
+            double xoffset;
+            double yoffset;
+        } mouse_move;
+        struct {
+            double xoffset;
+            double yoffset;
+        } mouse_scroll;
     } data;
     [[nodiscard]] std::string what() const;
 };
@@ -67,5 +73,9 @@ private:
     static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
     static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
+    static void mouseEnterCallback(GLFWwindow* window, int entered);
+
+    double mouse_x_pos, mouse_y_pos;
+    bool reset_mouse_position_upon_enter_window = false;
 };
 }

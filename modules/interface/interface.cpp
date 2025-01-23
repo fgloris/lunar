@@ -14,11 +14,11 @@ namespace lunar {
         return fmt::format("<mouse click: button:{}, x:{}, y:{}>",
                                 data.mouse_click.button,data.mouse_click.xpos,data.mouse_click.ypos);
     case EventType::MOUSE_MOVE:
-        return fmt::format("<mouse move: x:{}, y:{}>",
-                                data.mouse_move_or_scroll.xpos,data.mouse_move_or_scroll.ypos);
+        return fmt::format("<mouse move: x:{}, y:{}, xoffset:{}, yoffset:{}>",
+                                data.mouse_move.xpos,data.mouse_move.ypos,data.mouse_move.xoffset,data.mouse_move.yoffset);
     case EventType::MOUSE_SCROLL:
         return fmt::format("<mouse scroll: x:{}, y:{}>",
-                                data.mouse_move_or_scroll.xpos,data.mouse_move_or_scroll.ypos);
+                                data.mouse_scroll.xoffset,data.mouse_scroll.yoffset);
     default: return "<unknown event>";
     }
 }
@@ -46,13 +46,19 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
             }
         }
         
+        if (config["keyboard_and_mouse_settings"]){
+            YAML::Node settings = config["keyboard_and_mouse_settings"];
+            reset_mouse_position_upon_enter_window = settings["reset_mouse_position_upon_enter_window"].as<bool>(); 
+        }
     } catch (const YAML::Exception& e) {
         std::cerr << "Error loading control config: " << e.what() << std::endl;
     }
+    glfwGetCursorPos(window, &mouse_x_pos, &mouse_y_pos);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetMouseButtonCallback(window, mouseButtonCallback);
     glfwSetScrollCallback(window, mouseScrollCallback);
     glfwSetCursorPosCallback(window, mouseMoveCallback);
+    glfwSetCursorEnterCallback(window, mouseEnterCallback);
     bound = true;
 }
 
@@ -63,9 +69,7 @@ void Interface::registerCallback(const std::string& name, EventCallbackFunction 
 void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     auto& registered_callbacks = Interface::getInstance().registered_callbacks;
     Event event = {.type = EventType::KEY, .data = {.key = {key, scancode, action, mods}}};
-    if (registered_callbacks.find(key) != registered_callbacks.end()) {
-        registered_callbacks[key](event);
-    }
+    registered_callbacks[key](event);
 }
 
 void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
@@ -73,24 +77,30 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {button, action, mods, xpos, ypos}}};
-    if (registered_callbacks.find(button) != registered_callbacks.end()) {
-        registered_callbacks[button](event);
-    }
+    registered_callbacks[button](event);
 }
 
 void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset){
     auto& registered_callbacks = Interface::getInstance().registered_callbacks;
-    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_move_or_scroll = {xoffset, yoffset}}};
-    if (registered_callbacks.find(static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)) != registered_callbacks.end()) {
-        registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)](event);
-    }
+    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {xoffset, yoffset}}};
+    registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL)](event);
 }
 
 void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
-    auto& registered_callbacks = Interface::getInstance().registered_callbacks;
-    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move_or_scroll = {xpos, ypos}}};
-    if (registered_callbacks.find(static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)) != registered_callbacks.end()) {
-        registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)](event);
+    auto& instance = Interface::getInstance();
+    auto& registered_callbacks = instance.registered_callbacks;
+    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.xpos = xpos, .ypos = ypos, .xoffset = xpos-instance.mouse_x_pos, .yoffset = ypos-instance.mouse_y_pos}}};
+    registered_callbacks[static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE)](event);
+    instance.mouse_x_pos = xpos;
+    instance.mouse_y_pos = ypos;
+}
+
+void Interface::mouseEnterCallback(GLFWwindow* window, int entered){
+    auto& instance = Interface::getInstance();
+    if (entered){
+        if (instance.reset_mouse_position_upon_enter_window){
+            glfwGetCursorPos(window, &instance.mouse_x_pos, &instance.mouse_y_pos);
+        }
     }
 }
 

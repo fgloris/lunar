@@ -1,7 +1,5 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 
 namespace lunar{
@@ -20,9 +18,11 @@ class Camera{
     void Rotate(const Event& event);
     void MoveForward(const Event& event);
     void MoveBackward(const Event& event);
-    
-    inline static float zoom_speed = 1.0f;
-    inline static float rotate_speed = 1.0f;
+    void MoveLeft(const Event& event);
+    void MoveRight(const Event& event);
+
+    inline static float zoom_speed = 2.0f;
+    inline static float rotate_speed = 0.001f;
     inline static float move_speed = 1.0f;
     private:
     float zoom;
