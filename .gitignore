@@ -4,3 +4,4 @@ clion-build/
 package/
 3rdparties/fmt/
 3rdparties/googletest/
+interface.yaml

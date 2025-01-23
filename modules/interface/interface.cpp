@@ -45,9 +45,9 @@ void Interface::bindAllCallbacks(const std::string& config_path, GLFWwindow* win
                     for (const auto& mod : binding["mod"]){
                         mod_value |= convertKeyNameToEventIndetifier(mod.as<std::string>());
                     }
-                    registered_callbacks_with_mod[event_identifier] = std::make_pair(all_callbacks[callback_name], mod_value);
+                    registered_callbacks[event_identifier] = std::make_pair(all_callbacks[callback_name], mod_value);
                 }else{
-                    registered_callbacks[event_identifier] = all_callbacks[callback_name];
+                    registered_callbacks[event_identifier] = std::make_pair(all_callbacks[callback_name], 0);
                 }
             }
         }
@@ -74,12 +74,10 @@ void Interface::registerCallback(const std::string& name, EventCallbackFunction 
 
 void Interface::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     auto& instance = Interface::getInstance();
-    Event event = {.type = EventType::KEY, .data = {.key = {key, scancode, action, mods}}};
+    Event event = {.type = EventType::KEY, .data = {.key = {.key = (unsigned short)key, .scancode = (unsigned short)scancode, .action = (unsigned short)action, .mods = (unsigned short)mods}}};
     if (instance.registered_callbacks.find(key) != instance.registered_callbacks.end()) {
-        instance.registered_callbacks[key](event);
-    }else if (instance.registered_callbacks_with_mod.find(key) != instance.registered_callbacks_with_mod.end()) {
-        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[key];
-        if (callback_with_mod.second & mods == callback_with_mod.second){
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[key];
+        if ((callback_with_mod.second & mods) == callback_with_mod.second){
             callback_with_mod.first(event);
         }
     }
@@ -89,12 +87,10 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
     auto& instance = Interface::getInstance();
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {button, action, mods, xpos, ypos}}};
+    Event event = {.type = EventType::MOUSE_CLICK, .data = {.mouse_click = {.button = (unsigned short)button, .action = (unsigned short)action, .mods = (unsigned short)mods, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos}}};
     if (instance.registered_callbacks.find(button) != instance.registered_callbacks.end()) {
-        instance.registered_callbacks[button](event);
-    }else if (instance.registered_callbacks_with_mod.find(button) != instance.registered_callbacks_with_mod.end()) {
-        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[button];
-        if (callback_with_mod.second & mods == callback_with_mod.second){
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[button];
+        if ((callback_with_mod.second & mods) == callback_with_mod.second){
             callback_with_mod.first(event);
         }
     }
@@ -102,14 +98,12 @@ void Interface::mouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset){
     auto& instance = Interface::getInstance();
-    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {xoffset, yoffset}}};
+    Event event = {.type = EventType::MOUSE_SCROLL, .data = {.mouse_scroll = {.xoffset = (unsigned short)xoffset, .yoffset = (unsigned short)yoffset}}};
     static unsigned short scroll_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_SCROLL);
     unsigned short mods = getModifier(window);
     if (instance.registered_callbacks.find(scroll_ident) != instance.registered_callbacks.end()) {
-        instance.registered_callbacks[scroll_ident](event);
-    }else if (instance.registered_callbacks_with_mod.find(scroll_ident) != instance.registered_callbacks_with_mod.end()) {
-        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[scroll_ident];
-        if (callback_with_mod.second & mods == callback_with_mod.second){
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[scroll_ident];
+        if ((callback_with_mod.second & mods) == callback_with_mod.second){
             callback_with_mod.first(event);
         }
     }
@@ -118,18 +112,19 @@ void Interface::mouseScrollCallback(GLFWwindow* window, double xoffset, double y
 void Interface::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos){
     auto& instance = Interface::getInstance();
     static unsigned short move_ident = static_cast<EventIdentifier>(LUNAR_EVENT::LUNAR_MOUSE_MOVE);
-    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.xpos = xpos, .ypos = ypos, .xoffset = xpos-instance.mouse_x_pos, .yoffset = ypos-instance.mouse_y_pos}}};
+    unsigned short mouse_button_state = getMouseButtonState(window);
+
+    Event event = {.type = EventType::MOUSE_MOVE, .data = {.mouse_move = {.mouse_button_state = mouse_button_state, .xpos = (unsigned short)xpos, .ypos = (unsigned short)ypos, .xoffset = (unsigned short)(xpos-instance.mouse_x_pos), .yoffset = (unsigned short)(ypos-instance.mouse_y_pos)}}};
     unsigned short mods = getModifier(window);
     if (instance.registered_callbacks.find(move_ident) != instance.registered_callbacks.end()) {
-        instance.registered_callbacks[move_ident](event);
-    }else if (instance.registered_callbacks_with_mod.find(move_ident) != instance.registered_callbacks_with_mod.end()) {
-        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks_with_mod[move_ident];
-        if (callback_with_mod.second & mods == callback_with_mod.second){
+        EventCallbackFuncWithMod callback_with_mod = instance.registered_callbacks[move_ident];
+        if ((callback_with_mod.second & mods) == callback_with_mod.second){
             callback_with_mod.first(event);
         }
     }
     instance.mouse_x_pos = xpos;
     instance.mouse_y_pos = ypos;
+    std::cout << xpos << " " << ypos << std::endl;
 }
 
 void Interface::mouseEnterCallback(GLFWwindow* window, int entered){
@@ -152,6 +147,17 @@ unsigned short Interface::getModifier(GLFWwindow* window){
     if (glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SUPER) == GLFW_PRESS)
         mods |= GLFW_MOD_SUPER;
     return mods;
+}
+
+unsigned short Interface::getMouseButtonState(GLFWwindow* window){
+    unsigned short mouse_button_state = 0;
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        mouse_button_state |= 1;
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+        mouse_button_state   |= 2;
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
+        mouse_button_state |= 4;
+    return mouse_button_state;
 }
 
 void Interface::debugCallback(const Event& event){

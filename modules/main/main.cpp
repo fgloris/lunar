@@ -87,6 +87,9 @@ int main() {
 
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
+
+    std::cout << sizeof(lunar::Event) << std::endl;
+    std::cout << sizeof(lunar::EventType) << std::endl;
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

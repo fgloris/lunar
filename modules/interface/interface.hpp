@@ -21,30 +21,28 @@ struct Event {
     EventType type;
     union {
         struct {
-            int key;
-            int scancode;
-            int action;
-            int mods;
+            unsigned short key;
+            unsigned short scancode;
+            unsigned short action;
+            unsigned short mods;
         } key;
         struct {
-            int button;
-            int action;
-            int mods;
-            double xpos;
-            double ypos;
+            unsigned short button;
+            unsigned short action;
+            unsigned short mods;
+            unsigned short xpos;
+            unsigned short ypos;
         } mouse_click;
         struct {
-            //int button;
-            //int mods;
-            double xpos;
-            double ypos;
-            double xoffset;
-            double yoffset;
+            unsigned short mouse_button_state;
+            unsigned short xpos;
+            unsigned short ypos;
+            unsigned short xoffset;
+            unsigned short yoffset;
         } mouse_move;
         struct {
-            //int mods;
-            double xoffset;
-            double yoffset;
+            unsigned short xoffset;
+            unsigned short yoffset;
         } mouse_scroll;
     } data;
     [[nodiscard]] std::string what() const;
@@ -58,8 +56,7 @@ class Interface {
 public:
     ~Interface();
     std::map<std::string, EventCallbackFunction> all_callbacks;
-    std::map<EventIdentifier, EventCallbackFunction> registered_callbacks;
-    std::map<EventIdentifier, EventCallbackFuncWithMod> registered_callbacks_with_mod;
+    std::map<EventIdentifier, EventCallbackFuncWithMod> registered_callbacks;
 
     static Interface& getInstance() {
         static Interface instance;
@@ -80,6 +77,7 @@ private:
     static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
     static void mouseEnterCallback(GLFWwindow* window, int entered);
     static unsigned short getModifier(GLFWwindow* window);
+    static unsigned short getMouseButtonState(GLFWwindow* window);
 
     double mouse_x_pos, mouse_y_pos;
     bool reset_mouse_position_upon_enter_window = false;
