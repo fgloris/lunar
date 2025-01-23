@@ -14,6 +14,7 @@ class Camera{
     [[nodiscard]] glm::mat4 computeViewMatrix() const;
     [[nodiscard]] glm::mat4 computeProjectionMatrix() const;
     [[nodiscard]] glm::vec3 computeTransformMatrix() const;
+    void resetZoom() {zoom = 45.0f;}
     void Zoom(const Event& event);
     void Rotate(const Event& event);
     void MoveForward(const Event& event);

@@ -13,6 +13,8 @@ keyboard_and_mouse_bindings:
     callback: "camera_move_left"
   - key: "GLFW_KEY_D"
     callback: "camera_move_right"
+  - key: "GLFW_KEY_R"
+    callback: "camera_reset_zoom"
   - key: "LUNAR_MOUSE_MOVE"
     callback: "camera_rotate"
     mod: ["GLFW_MOD_SHIFT", "GLFW_MOD_CONTROL"]

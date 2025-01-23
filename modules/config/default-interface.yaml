@@ -1,16 +1,20 @@
+# capslock and numlock are not supported
+
+keyboard_and_mouse_settings:
+  reset_mouse_position_upon_enter_window: true
 keyboard_and_mouse_bindings:
   - key: "GLFW_KEY_W"
-    callback: "move_forward"
+    callback: "camera_move_forward"
   - key: "GLFW_KEY_S"
-    callback: "move_backward"
-  - key: "GLFW_KEY_A"
-    callback: "move_left"
-  - key: "GLFW_KEY_D"
-    callback: "move_right"
-    
-  - key: "GLFW_MOUSE_BUTTON_LEFT"
-    callback: "camera_rotate"
-  - key: "GLFW_MOUSE_BUTTON_RIGHT"
+    callback: "camera_move_backward"
+  - key: "LUNAR_MOUSE_SCROLL"
     callback: "camera_zoom"
-  - key: "GLFW_MOUSE_BUTTON_MIDDLE"
-    callback: "camera_move"
+  - key: "GLFW_KEY_A"
+    callback: "camera_move_left"
+  - key: "GLFW_KEY_D"
+    callback: "camera_move_right"
+  - key: "GLFW_KEY_R"
+    callback: "camera_reset_zoom"
+  - key: "LUNAR_MOUSE_MOVE"
+    callback: "camera_rotate"
+    mod: ["GLFW_MOD_SHIFT", "GLFW_MOD_CONTROL"]
