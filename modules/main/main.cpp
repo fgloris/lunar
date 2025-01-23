@@ -1,7 +1,8 @@
-#include "window.hpp"
-#include "shader.hpp"
-#include "camera.hpp"
-#include "texture.hpp"
+#include "render/window.hpp"
+#include "render/shader.hpp"
+#include "render/camera.hpp"
+#include "render/texture.hpp"
+#include "interface/interface.hpp"
 #include <iostream>
 
 int main() {
@@ -73,23 +74,16 @@ int main() {
     shader_program.useTexture(texture1);
     shader_program.useTexture(texture2);
 
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), 
-                                static_cast<float>(window.getWidth()) / static_cast<float>(window.getHeight()),
-                                0.1f, 
-                                100.0f);
+    lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.0f, 0.0f));
 
         shader_program.use();
-        shader_program.setTransform(projection * view * model);
+        shader_program.setTransform(camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
         shader_program.draw();
         window.swapBuffers();
         window.pollEvents();

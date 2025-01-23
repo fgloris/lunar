@@ -7,16 +7,17 @@ namespace lunar{
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
         camera_right = glm::normalize(glm::cross(up, camera_direction));
         camera_up = glm::normalize(glm::cross(camera_direction, camera_right));
-        view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
     }
-    Camera::~Camera() {}
-    glm::mat4 Camera::getProjectionMatrix(){
+    glm::mat4 Camera::computeViewMatrix() const {
+        return glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+    }
+
+    glm::mat4 Camera::computeProjectionMatrix() const{
         if (!Window::initialized){
             throw std::runtime_error("Window not initialized");
-        }else{
+        }else {
             Window& w = Window::getInstance();
-            projection = glm::perspective(glm::radians(zoom), (float)w.getWidth() / (float)w.getHeight(), 0.1f, 100.0f);
+            return glm::perspective(glm::radians(zoom), static_cast<float>(w.getWidth()) / static_cast<float>(w.getHeight()), 0.1f, 100.0f);
         }
-        return projection;
     }
 }

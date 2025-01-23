@@ -4,7 +4,7 @@
 
 namespace lunar {
 
-Interface::Interface(std::string config_path) {
+Interface::Interface(const std::string& config_path) {
     try {
         YAML::Node config = YAML::LoadFile(config_path);
         
@@ -16,7 +16,7 @@ Interface::Interface(std::string config_path) {
                 int key_value = convertKeyNameToGLFW(key_name);
                 
                 Event event;
-                event.type = Type::KEY;
+                event.type = EventType::KEY;
                 event.data.key.key = key_value;
                 
                 callbacks[callback_name] = [](Event e) {
@@ -32,13 +32,13 @@ Interface::Interface(std::string config_path) {
                 
                 Event event;
                 if (action == "look_around") {
-                    event.type = Type::MOUSE_CLICK;
+                    event.type = EventType::MOUSE_CLICK;
                 } else if (action == "scroll") {
-                    event.type = Type::MOUSE_SCROLL;
+                    event.type = EventType::MOUSE_SCROLL;
                 }
                 
                 callbacks[callback_name] = [](Event e) {
-                    std::cout << "Mouse event triggered: " << e.type << std::endl;
+                    std::cout << "Mouse event triggered: " << e.what() << std::endl;
                 };
             }
         }

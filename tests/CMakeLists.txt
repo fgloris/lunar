@@ -15,7 +15,7 @@ target_link_libraries(${TEST_BINARY}
 
 target_include_directories(${TEST_BINARY}
     PRIVATE
-    ${CMAKE_SOURCE_DIR}/modules/render
+    ${CMAKE_SOURCE_DIR}/modules
 )
 
 include(GoogleTest)
