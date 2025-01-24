@@ -1,66 +1,162 @@
-#include "window.hpp"
-#include "shader.hpp"
+#include "render/window.hpp"
+#include "render/shader.hpp"
+#include "render/camera.hpp"
+#include "render/texture.hpp"
+#include "interface/interface.hpp"
 #include <gtest/gtest.h>
 #include <memory>
-
-class WindowTest : public ::testing::Test {
+#include <functional>
+class SmilingBoxTest : public ::testing::Test {
 protected:
     void SetUp() override {
         window = &lunar::Window::getInstance();
-        window->init(800, 600, "OpenGL Test");
+        window->init(1800, 1200, "OpenGL Test");
+        
+        const std::string vertex_shader_code = 
+        #include "../modules/render/GLSL/vertex.glsl"
+        ;
+        const std::string fragment_shader_code = 
+        #include "../modules/render/GLSL/fragment.glsl"
+        ;
+        
+        shader_program = std::make_unique<lunar::ShaderProgram>(vertex_shader_code, fragment_shader_code);
+        camera = std::make_unique<lunar::Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
+        setupShaderAndGeometry();
+        setupTextures();
+        
+        // 只在第一次测试时注册回调
+        static bool callbacks_registered = false;
+        if (!callbacks_registered) {
+            setupCallbacks();
+            callbacks_registered = true;
+        }
     }
 
     void TearDown() override {
-        // Window是单例，会自动清理
+        shader_program.reset();
+        camera.reset();
+    }
+
+    void setupShaderAndGeometry() {
+        shader_program->addVertexDataProperty({"position","color","texture"},{3,3,2});
+        shader_program->bindVAO(0);
+        shader_program->setVertices<8>({
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+
+            {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+
+            {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+
+            {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+            { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+            {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+            {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f}
+        });
+        shader_program->setSequentialIndices();
+    }
+
+    void setupTextures() {
+        texture1 = std::make_unique<lunar::Texture>("../assets/container.jpg", 0);
+        texture2 = std::make_unique<lunar::Texture>("../assets/awesomeface.png", 1,
+                                GL_MIRRORED_REPEAT,
+                                GL_LINEAR,
+                                GL_NEAREST,
+                                GL_RGBA,
+                                GL_RGBA,
+                                false,
+                                true);
+        
+        shader_program->use();
+        shader_program->useTexture(*texture1);
+        shader_program->useTexture(*texture2);
+    }
+
+    void setupCallbacks() {
+        auto& interface = lunar::Interface::getInstance();
+        
+        // 在注册前先清除所有已存在的回调
+        interface.clearCallbacks();  // 需要在Interface类中添加这个方法
+        
+        interface.registerCallback("window_close", std::bind(&lunar::Window::close, window, std::placeholders::_1));
+        interface.registerCallback("window_fullscreen", std::bind(&lunar::Window::fullscreen, window, std::placeholders::_1));
+        interface.registerCallback("window_windowed", std::bind(&lunar::Window::windowed, window, std::placeholders::_1));
+        interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::MoveLeft, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, camera.get()));
+        interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, camera.get(), std::placeholders::_1));
+        
+        interface.bindAllCallbacks("../modules/config/interface.yaml", window->getHandle());
     }
 
     lunar::Window* window;
+    std::unique_ptr<lunar::ShaderProgram> shader_program;
+    std::unique_ptr<lunar::Camera> camera;
+    std::unique_ptr<lunar::Texture> texture1;
+    std::unique_ptr<lunar::Texture> texture2;
 };
 
-TEST_F(WindowTest, WindowInitialization) {
+TEST_F(SmilingBoxTest, InitializationTest) {
     EXPECT_NE(window->getHandle(), nullptr);
-    EXPECT_EQ(window->getWidth(), 800);
-    EXPECT_EQ(window->getHeight(), 600);
+    EXPECT_NE(shader_program.get(), nullptr);
+    EXPECT_NE(camera.get(), nullptr);
+    EXPECT_NE(texture1.get(), nullptr);
+    EXPECT_NE(texture2.get(), nullptr);
 }
 
-TEST_F(WindowTest, ShaderCompilation) {
-    // 测试着色器编译
+TEST_F(SmilingBoxTest, RenderOneFrame) {
     EXPECT_NO_THROW({
-        lunar::Shader vertex_shader(GL_VERTEX_SHADER);
-        lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
-    });
-}
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-TEST_F(WindowTest, ShaderProgramLinking) {
-    lunar::Shader vertex_shader(GL_VERTEX_SHADER);
-    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
-    
-    EXPECT_NO_THROW({
-        lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
-    });
-}
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.0f, 0.0f));
 
-TEST_F(WindowTest, AutoConstruct){
-    EXPECT_NO_THROW({
-        lunar::ShaderProgram shader_program;
-    });
-}
-
-TEST_F(WindowTest, BasicRendering) {
-    lunar::Shader vertex_shader(GL_VERTEX_SHADER);
-    lunar::Shader fragment_shader(GL_FRAGMENT_SHADER);
-    lunar::ShaderProgram shader_program(vertex_shader, fragment_shader);
-    shader_program.setVertices({
-        -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // 左下，红色
-         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下，绿色
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 顶部，蓝色
-    });
-
-    // 测试一帧渲染
-    EXPECT_NO_THROW({
-        glClear(GL_COLOR_BUFFER_BIT);
-        shader_program.draw();
+        shader_program->use();
+        shader_program->setTransform(camera->computeProjectionMatrix() * camera->computeViewMatrix() * model);
+        shader_program->draw();
         window->swapBuffers();
         window->pollEvents();
+    });
+}
+
+TEST_F(SmilingBoxTest, TextureBinding) {
+    EXPECT_NO_THROW({
+        shader_program->use();
+        shader_program->useTexture(*texture1);
+        shader_program->useTexture(*texture2);
     });
 }

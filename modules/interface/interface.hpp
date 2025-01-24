@@ -68,6 +68,14 @@ public:
 
     inline static bool bound = false;
     inline static bool registered = false;
+
+    void clearCallbacks() {
+        registered_callbacks.clear();
+        all_callbacks.clear();
+        registered = false;
+        bound = false;
+    }
+
 private:
     Interface() = default;
     static EventIdentifier convertKeyNameToEventIndetifier(const std::string& key_name);
