@@ -14,15 +14,8 @@ int main() {
         std::cerr << "Failed to initialize window, error: " << e.what() << std::endl;
         return -1;
     }
-    const std::string vertex_shader_code = 
-    #include "../modules/render/GLSL/vertex.glsl"
-    ;
-    const std::string fragment_shader_code = 
-    #include "../modules/render/GLSL/fragment.glsl"
-    ;
-    lunar::ShaderProgram shader_program(vertex_shader_code, fragment_shader_code);
-    shader_program.addVertexDataProperty({"position","color","texture"},{3,3,2});
-    shader_program.bindVAO(0);
+    lunar::ShaderProgram shader_program;
+    shader_program.setVertexDataProperty({"position","color","texture"},{3,3,2});
     shader_program.setVertices<8>({
         {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
         { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},

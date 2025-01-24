@@ -22,71 +22,29 @@ namespace lunar {
             throw std::runtime_error("ERROR: SHADER COMPILATION FAILED\n" + std::string(infoLog));
         }
     }
-    
-    Shader::Shader(int shader_type) : shader_type(shader_type) {
-        std::string shader_code;
-        switch (shader_type) {
-        case GL_VERTEX_SHADER:
-            shader_code = 
-            #include "GLSL/vertex.glsl"
-            ;
-            break;
-        case GL_FRAGMENT_SHADER:
-            shader_code = 
-            #include "GLSL/fragment.glsl"
-            ;
-            break;
-        case GL_COMPUTE_SHADER:
-            shader_code = 
-            #include "GLSL/compute.glsl"
-            ;
-            break;
-        default:
-            throw std::runtime_error("ERROR: SHADER TYPE NOT SUPPORTED\n");
-        }
-        const char* shader_code_cstr = shader_code.c_str();
-        
-        shader_id = glCreateShader(shader_type);
-        glShaderSource(shader_id, 1, &shader_code_cstr, nullptr);
-        glCompileShader(shader_id);
-
-        int success;
-        glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
-        if (!success)
-        {
-            char infoLog[512];
-            glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-            throw std::runtime_error("ERROR: SHADER COMPILATION FAILED\n" + std::string(infoLog));
-        }
-    }
 
     Shader::~Shader() {
         glDeleteShader(shader_id);
     }
 
-    ShaderProgram::ShaderProgram(Shader& vertex_shader, Shader& fragment_shader) {
-        attachShaders(vertex_shader, fragment_shader);
-        bindBuffers();
-        unbindBuffers();
-    }
-
-    ShaderProgram::ShaderProgram() {
-        Shader vertex_shader(GL_VERTEX_SHADER);
-        Shader fragment_shader(GL_FRAGMENT_SHADER);
-        attachShaders(vertex_shader, fragment_shader);
+    ShaderProgram::ShaderProgram(const std::string& vertex_shader_code, const std::string& fragment_shader_code, const std::string& compute_shader_code) {
+        if (!vertex_shader_code.empty()) vertex_shader = new Shader(GL_VERTEX_SHADER, vertex_shader_code);
+        if (!fragment_shader_code.empty()) fragment_shader = new Shader(GL_FRAGMENT_SHADER, fragment_shader_code);
+        if (!compute_shader_code.empty()) compute_shader = new Shader(GL_COMPUTE_SHADER, compute_shader_code);
+        attachShaders();
 
         glGenBuffers(1, &VBO);
         glGenBuffers(1, &EBO);
-        glGenVertexArrays(1, &VAO);
-
-        bindBuffers();
     }
 
     ShaderProgram::~ShaderProgram() {
+        delete vertex_shader;
+        delete fragment_shader;
+        delete compute_shader;
         glDeleteProgram(program_id);
         glDeleteBuffers(1, &VBO);
         glDeleteBuffers(1, &EBO);
-        glDeleteVertexArrays(1, &VAO);
+        for (unsigned int vao : VAOs) glDeleteVertexArrays(1, &vao);
     }
 
     void ShaderProgram::draw() const {
@@ -96,13 +54,16 @@ namespace lunar {
 
     void ShaderProgram::use() const {
         glUseProgram(program_id);
-        bindBuffers();
+        glBindVertexArray(VAOs[current_vao]);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     }
 
-    void ShaderProgram::attachShaders(Shader& vertex_shader, Shader& fragment_shader){
+    void ShaderProgram::attachShaders(){
         program_id = glCreateProgram();
-        glAttachShader(program_id, vertex_shader.getID());
-        glAttachShader(program_id, fragment_shader.getID());
+        if (vertex_shader) glAttachShader(program_id, vertex_shader->getID());
+        if (fragment_shader) glAttachShader(program_id, fragment_shader->getID());
+        if (compute_shader) glAttachShader(program_id, compute_shader->getID());
         glLinkProgram(program_id);
 
         int success;
@@ -129,35 +90,36 @@ namespace lunar {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
     }
 
-    void ShaderProgram::setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
+    void ShaderProgram::addVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
         assert(names.size() == sizes.size());
-        glBindVertexArray(VAO);
+        unsigned int vao_index = VAOs.size();
+        VAOs.push_back(0);
+        glGenVertexArrays(1, &VAOs[vao_index]);
+        
+        glBindVertexArray(VAOs[vao_index]);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        
         unsigned int stride = 0, offset = 0;
         for (unsigned int i = 0; i < sizes.size(); i++) {
             stride += sizes[i];
         }
+        
         for (unsigned int i = 0; i < names.size(); i++) {
-            glVertexAttribPointer(i,                                // 位置属性的layout location
-                             sizes[i],                              // 3个float (xyz)
-                             GL_FLOAT,                              // 数据类型
-                             GL_FALSE,                              // 不需要归一化
-                             stride * sizeof(float),                // 步长：8个float (xyz + rgb + uv)
-                             (void*)(offset * sizeof(float)));      // 位置数据偏移量为0
+            glVertexAttribPointer(i,                           
+                             sizes[i],                         
+                             GL_FLOAT,                         
+                             GL_FALSE,                         
+                             stride * sizeof(float),           
+                             (void*)(offset * sizeof(float))); 
             glEnableVertexAttribArray(i);
             offset += sizes[i];
         }
     }
 
-    void ShaderProgram::bindBuffers() const {
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    }
-
-    void ShaderProgram::unbindBuffers() const {
-        glBindBuffer(GL_ARRAY_BUFFER, 0); 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+    void ShaderProgram::bindVAO(unsigned int vao_index){
+        if (vao_index >= VAOs.size()) throw std::runtime_error("VAO index out of bounds");
+        current_vao = vao_index;
+        glBindVertexArray(VAOs[vao_index]);
     }
 
     void ShaderProgram::useTexture(const Texture& texture) const {
@@ -175,5 +137,11 @@ namespace lunar {
 
     void ShaderProgram::setMat4(const std::string &name, const glm::mat4 &mat) const {
         glUniformMatrix4fv(glGetUniformLocation(program_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+    
+    void ShaderProgram::unbindBuffers() const {
+        glBindBuffer(GL_ARRAY_BUFFER, 0); 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 }
