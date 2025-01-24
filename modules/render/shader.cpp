@@ -44,7 +44,7 @@ namespace lunar {
         glDeleteProgram(program_id);
         glDeleteBuffers(1, &VBO);
         glDeleteBuffers(1, &EBO);
-        for (unsigned int vao : VAOs) glDeleteVertexArrays(1, &vao);
+        glDeleteVertexArrays(1, &VAO);
     }
 
     void ShaderProgram::draw() const {
@@ -54,7 +54,7 @@ namespace lunar {
 
     void ShaderProgram::use() const {
         glUseProgram(program_id);
-        glBindVertexArray(VAOs[current_vao]);
+        glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     }
@@ -90,13 +90,11 @@ namespace lunar {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
     }
 
-    void ShaderProgram::addVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
+    void ShaderProgram::setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
         assert(names.size() == sizes.size());
-        unsigned int vao_index = VAOs.size();
-        VAOs.push_back(0);
-        glGenVertexArrays(1, &VAOs[vao_index]);
+        glGenVertexArrays(1, &VAO);
         
-        glBindVertexArray(VAOs[vao_index]);
+        glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         
         unsigned int stride = 0, offset = 0;
@@ -115,13 +113,7 @@ namespace lunar {
             offset += sizes[i];
         }
     }
-
-    void ShaderProgram::bindVAO(unsigned int vao_index){
-        if (vao_index >= VAOs.size()) throw std::runtime_error("VAO index out of bounds");
-        current_vao = vao_index;
-        glBindVertexArray(VAOs[vao_index]);
-    }
-
+    
     void ShaderProgram::useTexture(const Texture& texture) const {
         texture.use();
         setInt(texture.name, texture.getID());

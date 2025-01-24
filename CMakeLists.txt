@@ -60,6 +60,9 @@ else()
         add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparties/googletest)
     endif()
     add_subdirectory(tests)
+
+    add_executable(${PROJECT_NAME}_smiling_box modules/main/main-smiling-box.cpp)
+    target_link_libraries(${PROJECT_NAME}_smiling_box PRIVATE render)
 endif()
 
 add_executable(${PROJECT_NAME} modules/main/main.cpp)

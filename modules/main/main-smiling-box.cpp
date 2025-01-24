@@ -15,14 +15,13 @@ int main() {
         return -1;
     }
     const std::string vertex_shader_code = 
-    #include "../modules/render/GLSL/vertex.glsl"
+    #include "../modules/render/GLSL/smiling-box-vs.glsl"
     ;
     const std::string fragment_shader_code = 
-    #include "../modules/render/GLSL/fragment.glsl"
+    #include "../modules/render/GLSL/smiling-box-fs.glsl"
     ;
     lunar::ShaderProgram shader_program(vertex_shader_code, fragment_shader_code);
-    shader_program.addVertexDataProperty({"position","color","texture"},{3,3,2});
-    shader_program.bindVAO(0);
+    shader_program.setVertexDataProperty({"position","color","texture"},{3,3,2});
     shader_program.setVertices<8>({
         {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
         { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},

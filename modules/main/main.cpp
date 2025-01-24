@@ -14,73 +14,64 @@ int main() {
         std::cerr << "Failed to initialize window, error: " << e.what() << std::endl;
         return -1;
     }
-    const std::string vertex_shader_code = 
-    #include "../modules/render/GLSL/vertex.glsl"
+    const std::string box_vertex_shader_code = 
+    #include "../modules/render/GLSL/phong-shading-box-vs.glsl"
     ;
-    const std::string fragment_shader_code = 
-    #include "../modules/render/GLSL/fragment.glsl"
+    const std::string box_fragment_shader_code = 
+    #include "../modules/render/GLSL/phong-shading-box-fs.glsl"
     ;
-    lunar::ShaderProgram shader_program(vertex_shader_code, fragment_shader_code);
-    shader_program.addVertexDataProperty({"position","color","texture"},{3,3,2});
-    shader_program.bindVAO(0);
-    shader_program.setVertices<8>({
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+    const std::string light_vertex_shader_code = 
+    #include "../modules/render/GLSL/phong-shading-light-vs.glsl"
+    ;
+    const std::string light_fragment_shader_code = 
+    #include "../modules/render/GLSL/phong-shading-light-fs.glsl"
+    ;
+    lunar::ShaderProgram box_shader_program(box_vertex_shader_code, box_fragment_shader_code);
+    box_shader_program.setVertexDataProperty({"position", "color"},{3,3});
+    box_shader_program.setVertices<6>({
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
 
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
 
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
 
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
 
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
 
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f}
+        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f}
     });
-    shader_program.setSequentialIndices();
-
-    lunar::Texture texture1("../assets/container.jpg", 0);
-    lunar::Texture texture2("../assets/awesomeface.png", 1,
-                            GL_MIRRORED_REPEAT,
-                            GL_LINEAR,
-                            GL_NEAREST,
-                            GL_RGBA,
-                            GL_RGBA,
-                            false,
-                            true);
-    
-    shader_program.use();
-    shader_program.useTexture(texture1);
-    shader_program.useTexture(texture2);
+    box_shader_program.setSequentialIndices();
 
     lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -106,9 +97,9 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        shader_program.use();
-        shader_program.setTransform(camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
-        shader_program.draw();
+        box_shader_program.use();
+        box_shader_program.setTransform(camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
+        box_shader_program.draw();
         window.swapBuffers();
         window.pollEvents();
     }
