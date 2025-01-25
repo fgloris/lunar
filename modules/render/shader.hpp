@@ -4,11 +4,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> 
 #include "texture.hpp"
+#include <type_traits>
 
 namespace lunar {
     template<unsigned int N>
     struct VertexData{
         float data[N];
+    };
+
+    struct Material {
+        glm::vec3 ambient;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+        float shininess;
     };
 
     class Shader {
@@ -44,13 +52,30 @@ namespace lunar {
         void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
         void useTexture(const Texture& texture) const;
         void setInt(const std::string &name, int value) const;
+        void setFloat(const std::string &name, float value) const;
+        void setVec2(const std::string &name, const glm::vec2 &vec) const;
+        void setVec3(const std::string &name, const glm::vec3 &vec) const;
+        void setVec4(const std::string &name, const glm::vec4 &vec) const;
         void setMat3(const std::string &name, const glm::mat3 &mat) const;
         void setMat4(const std::string &name, const glm::mat4 &mat) const;
-        void setVec3(const std::string &name, const glm::vec3 &vec) const;
         [[nodiscard]] unsigned int getID() const {return program_id;}
 
         std::vector<float> vertices;
         std::vector<unsigned int> ebo_indices;
+
+        // 通用结构体设置模板
+        template<typename T>
+        void setUniformStruct(const std::string& name, const T& data) {
+            if constexpr (std::is_same_v<T, Material>) {
+                setVec3(name + ".ambient", data.ambient);
+                setVec3(name + ".diffuse", data.diffuse);
+                setVec3(name + ".specular", data.specular);
+                setFloat(name + ".shininess", data.shininess);
+            }else {
+                static_assert(always_false<T>::value, "Unsupported uniform struct type");
+            }
+        }
+
     private:
         void attachShaders();
         void unbindBuffers() const;
@@ -60,5 +85,8 @@ namespace lunar {
         unsigned int VBO, EBO, VAO; // Vertex Buffer Object, Vertex Array Object, Element Buffer Object
         unsigned int program_id;
         unsigned int stride{0};
+
+        template<typename T>
+        struct always_false : std::false_type {};
     };
 }

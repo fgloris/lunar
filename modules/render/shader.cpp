@@ -134,6 +134,10 @@ namespace lunar {
         glUniform1i(glGetUniformLocation(program_id, name.c_str()), value);
     }
 
+    void ShaderProgram::setFloat(const std::string &name, float value) const {
+        glUniform1f(glGetUniformLocation(program_id, name.c_str()), value);
+    }
+
     void ShaderProgram::setMat4(const std::string &name, const glm::mat4 &mat) const {
         glUniformMatrix4fv(glGetUniformLocation(program_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
     }
@@ -144,6 +148,10 @@ namespace lunar {
 
     void ShaderProgram::setVec3(const std::string &name, const glm::vec3 &vec) const {
         glUniform3fv(glGetUniformLocation(program_id, name.c_str()), 1, glm::value_ptr(vec));
+    }
+
+    void ShaderProgram::setVec4(const std::string &name, const glm::vec4 &vec) const {
+        glUniform4fv(glGetUniformLocation(program_id, name.c_str()), 1, glm::value_ptr(vec));
     }
     
     void ShaderProgram::unbindBuffers() const {

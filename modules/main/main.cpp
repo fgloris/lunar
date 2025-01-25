@@ -8,6 +8,20 @@
 #include <functional>
 #include <cmath>
 
+// 定义任意结构体
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    glm::vec3 position;
+    glm::vec3 color;
+    float intensity;
+};
+
 int main() {
     auto& window = lunar::Window::getInstance();
     try {
@@ -155,6 +169,19 @@ int main() {
     box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     box_shader_program.setMat3("normalMatrix", box_normal_matrix);
     box_shader_program.setMat4("model", box_model);
+    box_shader_program.setVec3("material.ambient",  glm::vec3(1.0f, 0.5f, 0.31f));
+    box_shader_program.setVec3("material.diffuse",  glm::vec3(1.0f, 0.5f, 0.31f));
+    box_shader_program.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    box_shader_program.setFloat("material.shininess", 32.0f);
+
+    lunar::Material material{
+        .ambient = glm::vec3(1.0f, 0.5f, 0.31f),
+        .diffuse = glm::vec3(1.0f, 0.5f, 0.31f),
+        .specular = glm::vec3(0.5f, 0.5f, 0.5f),
+        .shininess = 32.0f
+    };
+
+    box_shader_program.setUniformStruct("material", material);
 
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
