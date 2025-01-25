@@ -1,15 +1,29 @@
 R"(
 #version 430 core
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position;
+    vec3 color;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 in vec3 normal;
 in vec3 fragPos;
 
 out vec4 fragColor;
 
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform Material material;
+uniform Light light;
 
 vec3 rgbToHsv(vec3 rgb) {
     float max = max(rgb.r, max(rgb.g, rgb.b));
@@ -43,21 +57,22 @@ vec3 cartoonify(vec3 rgb) {
 
 void main()
 {
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    // ambient
+    vec3 ambient = light.ambient * material.ambient;
 
+    // diffuse
     vec3 norm = normalize(normal);
-    vec3 lightDir = normalize(lightPos - fragPos);
+    vec3 lightDir = normalize(light.position - fragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
+    vec3 diffuse = light.color * diff * light.diffuse * material.diffuse;
 
-    float specularStrength = 0.8;
+    // specular
     vec3 viewDir = normalize(viewPos - fragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8);
-    vec3 specular = specularStrength * spec * lightColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.color * spec * light.specular * material.specular;
 
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    fragColor = vec4(cartoonify(result), 1.0);
+    vec3 result = ambient + diffuse + specular;
+    fragColor = vec4(result, 1.0);
 }
 )"

@@ -8,20 +8,6 @@
 #include <functional>
 #include <cmath>
 
-// 定义任意结构体
-struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    float shininess;
-};
-
-struct Light {
-    glm::vec3 position;
-    glm::vec3 color;
-    float intensity;
-};
-
 int main() {
     auto& window = lunar::Window::getInstance();
     try {
@@ -165,23 +151,21 @@ int main() {
     glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
 
     box_shader_program.use();
-    box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     box_shader_program.setMat3("normalMatrix", box_normal_matrix);
     box_shader_program.setMat4("model", box_model);
-    box_shader_program.setVec3("material.ambient",  glm::vec3(1.0f, 0.5f, 0.31f));
-    box_shader_program.setVec3("material.diffuse",  glm::vec3(1.0f, 0.5f, 0.31f));
-    box_shader_program.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-    box_shader_program.setFloat("material.shininess", 32.0f);
 
-    lunar::Material material{
-        .ambient = glm::vec3(1.0f, 0.5f, 0.31f),
-        .diffuse = glm::vec3(1.0f, 0.5f, 0.31f),
-        .specular = glm::vec3(0.5f, 0.5f, 0.5f),
-        .shininess = 32.0f
+    lunar::Material material = lunar::Model::materials["gold"];
+
+    lunar::Light light{
+        .position = glm::vec3(0.0f),
+        .color = glm::vec3(1.0f, 1.0f, 1.0f),
+        .ambient = glm::vec3(0.2f, 0.2f, 0.2f),
+        .diffuse = glm::vec3(0.5f, 0.5f, 0.5f),
+        .specular = glm::vec3(1.0f, 1.0f, 1.0f)
     };
 
     box_shader_program.setUniformStruct("material", material);
+    box_shader_program.setUniformStruct("light", light);
 
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
@@ -205,7 +189,7 @@ int main() {
 
         // 渲染箱子
         box_shader_program.use();
-        box_shader_program.setVec3("lightPos", lightPos);  // 使用更新后的光源位置
+        box_shader_program.setVec3("light.position", lightPos);  // 使用更新后的光源位置
         box_shader_program.setVec3("viewPos", camera.getPosition());
 
         

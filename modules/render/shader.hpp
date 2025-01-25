@@ -19,6 +19,14 @@ namespace lunar {
         float shininess;
     };
 
+    struct Light {
+        glm::vec3 position;
+        glm::vec3 color;
+        glm::vec3 ambient;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+    };
+
     class Shader {
     public:
         Shader(int shader_type, const std::string& shader_code);
@@ -71,7 +79,15 @@ namespace lunar {
                 setVec3(name + ".diffuse", data.diffuse);
                 setVec3(name + ".specular", data.specular);
                 setFloat(name + ".shininess", data.shininess);
-            }else {
+            }
+            else if constexpr (std::is_same_v<T, Light>) {
+                setVec3(name + ".position", data.position);
+                setVec3(name + ".color", data.color);
+                setVec3(name + ".ambient", data.ambient);
+                setVec3(name + ".diffuse", data.diffuse);
+                setVec3(name + ".specular", data.specular);
+            }
+            else {
                 static_assert(always_false<T>::value, "Unsupported uniform struct type");
             }
         }
