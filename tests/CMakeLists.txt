@@ -20,3 +20,9 @@ target_include_directories(${TEST_BINARY}
 
 include(GoogleTest)
 gtest_discover_tests(${TEST_BINARY})
+
+add_executable(${PROJECT_NAME}_smiling_box main-smiling-box.cpp)
+target_link_libraries(${PROJECT_NAME}_smiling_box PRIVATE render)
+
+add_executable(${PROJECT_NAME}_phong_shading main-phong-shading.cpp)
+target_link_libraries(${PROJECT_NAME}_phong_shading PRIVATE render)

@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include <yaml-cpp/yaml.h>
 #include "interface/interface.hpp"
 #include <stdexcept>
 
@@ -17,6 +18,18 @@ namespace lunar {
         this->height = height;
         this->title = title;
         this->isFullscreen = isFullscreen;
+        initGLFW();
+        initWindow();
+        initGLAD();
+        initialized = true;
+    }
+
+    void Window::init(std::string config_path) {
+        YAML::Node config = YAML::LoadFile(config_path);
+        this->title = config["window_settings"]["title"].as<std::string>();
+        this->width = config["window_settings"]["width"].as<int>();
+        this->height = config["window_settings"]["height"].as<int>();
+        this->isFullscreen = config["window_settings"]["isFullscreen"].as<bool>();
         initGLFW();
         initWindow();
         initGLAD();

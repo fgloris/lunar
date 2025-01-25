@@ -11,7 +11,7 @@
 int main() {
     auto& window = lunar::Window::getInstance();
     try {
-        window.init("../modules/config/interface.yaml");
+        window.init(1800, 1200, "OpenGL");
     } catch (const std::exception& e) {
         std::cerr << "Failed to initialize window, error: " << e.what() << std::endl;
         return -1;
@@ -19,16 +19,16 @@ int main() {
 
     // 创建箱子和光源的着色器程序
     const std::string box_vertex_shader_code = 
-    #include "GLSL/box-vs.glsl"
+    #include "phong-shading/phong-shading-box-vs.glsl"
     ;
     const std::string box_fragment_shader_code = 
-    #include "GLSL/box-fs.glsl"
+    #include "phong-shading/phong-shading-box-fs.glsl"
     ;
     const std::string light_vertex_shader_code = 
-    #include "GLSL/light-vs.glsl"
+    #include "phong-shading/phong-shading-light-vs.glsl"
     ;
     const std::string light_fragment_shader_code = 
-    #include "GLSL/light-fs.glsl"
+    #include "phong-shading/phong-shading-light-fs.glsl"
     ;
 
     lunar::ShaderProgram box_shader_program(box_vertex_shader_code, box_fragment_shader_code);
@@ -150,12 +150,6 @@ int main() {
     box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
 
-    box_shader_program.use();
-    box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    box_shader_program.setMat3("normalMatrix", box_normal_matrix);
-    box_shader_program.setMat4("model", box_model);
-
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -168,24 +162,26 @@ int main() {
             0.8f,             // y坐标保持不变
             2.0f * sin(time)  // z坐标
         );
+
+        // 更新光源模型矩阵
         glm::mat4 light_model = glm::mat4(1.0f);
         light_model = glm::translate(light_model, lightPos);
         light_model = glm::scale(light_model, glm::vec3(0.2f));
 
-        // 更新光源模型矩阵
-        glm::mat4 view = camera.computeViewMatrix();
-        glm::mat4 projection = camera.computeProjectionMatrix();
-
         // 渲染箱子
         box_shader_program.use();
+        box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+        box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
         box_shader_program.setVec3("lightPos", lightPos);  // 使用更新后的光源位置
         box_shader_program.setVec3("viewPos", camera.getPosition());
 
+        glm::mat4 view = camera.computeViewMatrix();
+        glm::mat4 projection = camera.computeProjectionMatrix();
         
-        
+        box_shader_program.setMat4("model", box_model);
         box_shader_program.setMat4("view", view);
         box_shader_program.setMat4("projection", projection);
-        
+        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
         box_shader_program.draw();
 
         // 渲染光源立方体

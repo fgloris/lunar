@@ -20,6 +20,7 @@ namespace lunar {
         }
         
         void init(int width, int height, const std::string& title, bool isFullscreen = false);
+        void init(std::string config_path);
 
         [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(window); }
         void swapBuffers() const { glfwSwapBuffers(window); }

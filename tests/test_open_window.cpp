@@ -13,10 +13,10 @@ protected:
         window->init(1800, 1200, "OpenGL Test");
         
         const std::string vertex_shader_code = 
-        #include "../modules/render/GLSL/smiling-box-vs.glsl"
+        #include "smiling-box/smiling-box-vs.glsl"
         ;
         const std::string fragment_shader_code = 
-        #include "../modules/render/GLSL/smiling-box-fs.glsl"
+        #include "smiling-box/smiling-box-fs.glsl"
         ;
         
         shader_program = std::make_unique<lunar::ShaderProgram>(vertex_shader_code, fragment_shader_code);

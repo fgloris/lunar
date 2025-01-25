@@ -1,4 +1,9 @@
 # capslock and numlock are not supported
+window_settings:
+  title: "Lunar"
+  width: 1800
+  height: 1200
+  isFullscreen: false
 
 keyboard_and_mouse_settings:
   reset_mouse_position_upon_enter_window: true
