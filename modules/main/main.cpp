@@ -6,6 +6,7 @@
 #include "model/model.hpp"
 #include <iostream>
 #include <functional>
+#include <cmath>
 
 int main() {
     auto& window = lunar::Window::getInstance();
@@ -130,8 +131,6 @@ int main() {
 
     lunar::Camera camera(glm::vec3(0.0f, 1.0f, 5.0f));
 
-    // 设置光源位置
-
     lunar::Interface& interface = lunar::Interface::getInstance();
 
     interface.registerCallback("window_close", std::bind(&lunar::Window::close, &window, std::placeholders::_1));
@@ -151,34 +150,38 @@ int main() {
     box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-    glm::mat4 light_model = glm::mat4(1.0f);
-    light_model = glm::translate(light_model, lightPos);
-    light_model = glm::scale(light_model, glm::vec3(0.2f));
-
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // 计算光源位置
+        float time = static_cast<float>(glfwGetTime());
+        glm::vec3 lightPos(
+            2.0f * cos(time),  // x坐标
+            1.0f,             // y坐标保持不变
+            2.0f * sin(time)  // z坐标
+        );
+
+        // 更新光源模型矩阵
+        glm::mat4 light_model = glm::mat4(1.0f);
+        light_model = glm::translate(light_model, lightPos);
+        light_model = glm::scale(light_model, glm::vec3(0.2f));
+
         // 渲染箱子
         box_shader_program.use();
-        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
         box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
         box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        box_shader_program.setVec3("lightPos", lightPos);
+        box_shader_program.setVec3("lightPos", lightPos);  // 使用更新后的光源位置
         box_shader_program.setVec3("viewPos", camera.getPosition());
-        
-        // 更新法线矩阵
-        glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
-        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
-        
+
         glm::mat4 view = camera.computeViewMatrix();
         glm::mat4 projection = camera.computeProjectionMatrix();
         
         box_shader_program.setMat4("model", box_model);
         box_shader_program.setMat4("view", view);
         box_shader_program.setMat4("projection", projection);
+        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
         box_shader_program.draw();
 
         // 渲染光源立方体
