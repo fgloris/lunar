@@ -14,6 +14,8 @@ int main() {
         std::cerr << "Failed to initialize window, error: " << e.what() << std::endl;
         return -1;
     }
+
+    // 创建箱子和光源的着色器程序
     const std::string box_vertex_shader_code = 
     #include "../modules/render/GLSL/phong-shading-box-vs.glsl"
     ;
@@ -26,54 +28,70 @@ int main() {
     const std::string light_fragment_shader_code = 
     #include "../modules/render/GLSL/phong-shading-light-fs.glsl"
     ;
+
     lunar::ShaderProgram box_shader_program(box_vertex_shader_code, box_fragment_shader_code);
-    box_shader_program.setVertexDataProperty({"position", "color"},{3,3});
-    box_shader_program.setVertices<6>({
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+    lunar::ShaderProgram light_shader_program(light_vertex_shader_code, light_fragment_shader_code);
 
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+    // 设置顶点属性
+    box_shader_program.setVertexDataProperty({"position"}, {3});
+    light_shader_program.setVertexDataProperty({"position"}, {3});
 
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+    // 设置立方体顶点数据
+    std::vector<lunar::VertexData<3>> vertices = {
+        {-0.5f, -0.5f, -0.5f}, 
+        { 0.5f, -0.5f, -0.5f},  
+        { 0.5f,  0.5f, -0.5f},  
+        { 0.5f,  0.5f, -0.5f},  
+        {-0.5f,  0.5f, -0.5f}, 
+        {-0.5f, -0.5f, -0.5f}, 
 
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f}, 
+        { 0.5f, -0.5f,  0.5f},  
+        { 0.5f,  0.5f,  0.5f},  
+        { 0.5f,  0.5f,  0.5f},  
+        {-0.5f,  0.5f,  0.5f}, 
+        {-0.5f, -0.5f,  0.5f}, 
 
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f}, 
+        {-0.5f,  0.5f, -0.5f}, 
+        {-0.5f, -0.5f, -0.5f}, 
+        {-0.5f, -0.5f, -0.5f}, 
+        {-0.5f, -0.5f,  0.5f}, 
+        {-0.5f,  0.5f,  0.5f}, 
 
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f},
-        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f}
-    });
+        { 0.5f,  0.5f,  0.5f},  
+        { 0.5f,  0.5f, -0.5f},  
+        { 0.5f, -0.5f, -0.5f},  
+        { 0.5f, -0.5f, -0.5f},  
+        { 0.5f, -0.5f,  0.5f},  
+        { 0.5f,  0.5f,  0.5f},  
+
+        {-0.5f, -0.5f, -0.5f}, 
+        { 0.5f, -0.5f, -0.5f},  
+        { 0.5f, -0.5f,  0.5f},  
+        { 0.5f, -0.5f,  0.5f},  
+        {-0.5f, -0.5f,  0.5f}, 
+        {-0.5f, -0.5f, -0.5f}, 
+
+        {-0.5f,  0.5f, -0.5f}, 
+        { 0.5f,  0.5f, -0.5f},  
+        { 0.5f,  0.5f,  0.5f},  
+        { 0.5f,  0.5f,  0.5f},  
+        {-0.5f,  0.5f,  0.5f}, 
+        {-0.5f,  0.5f, -0.5f}, 
+    };
+    
+
+
+    box_shader_program.setVertices<3>(vertices);
+    light_shader_program.setVertices<3>(vertices);
+
     box_shader_program.setSequentialIndices();
+    light_shader_program.setSequentialIndices();
 
-    lunar::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    lunar::Camera camera(glm::vec3(0.0f, 1.0f, 5.0f));
+
+    // 设置光源位置
 
     lunar::Interface& interface = lunar::Interface::getInstance();
 
@@ -90,16 +108,38 @@ int main() {
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::mat4 box_model = glm::mat4(1.0f);
+    glm::mat4 light_model = glm::mat4(1.0f);
+    box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    light_model = glm::translate(light_model, lightPos);
+    light_model = glm::scale(light_model, glm::vec3(0.2f));
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.0f, 0.0f));
-
+        // 渲染箱子
         box_shader_program.use();
-        box_shader_program.setTransform(camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
+        box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f)); // 珊瑚红
+        box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));   // 白光
+        
+        glm::mat4 view = camera.computeViewMatrix();
+        glm::mat4 projection = camera.computeProjectionMatrix();
+        
+        box_shader_program.setMat4("model", box_model);
+        box_shader_program.setMat4("view", view);
+        box_shader_program.setMat4("projection", projection);
         box_shader_program.draw();
+
+        // 渲染光源立方体
+        light_shader_program.use();
+        
+        light_shader_program.setMat4("model", light_model);
+        light_shader_program.setMat4("view", view);
+        light_shader_program.setMat4("projection", projection);
+        light_shader_program.draw();
+
         window.swapBuffers();
         window.pollEvents();
     }

@@ -41,14 +41,14 @@ namespace lunar {
         }
         void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
         void useTexture(const Texture& texture) const;
-        void setTransform(const glm::mat4 &mat) const;
+        void setInt(const std::string &name, int value) const;
+        void setMat4(const std::string &name, const glm::mat4 &mat) const;
+        void setVec3(const std::string &name, const glm::vec3 &vec) const;
         [[nodiscard]] unsigned int getID() const {return program_id;}
-        
+
         std::vector<float> vertices;
         std::vector<unsigned int> ebo_indices;
     private:
-        void setInt(const std::string &name, int value) const;
-        void setMat4(const std::string &name, const glm::mat4 &mat) const;
         void attachShaders();
         void unbindBuffers() const;
 

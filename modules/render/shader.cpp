@@ -35,6 +35,7 @@ namespace lunar {
 
         glGenBuffers(1, &VBO);
         glGenBuffers(1, &EBO);
+        glGenVertexArrays(1, &VAO);
     }
 
     ShaderProgram::~ShaderProgram() {
@@ -82,7 +83,7 @@ namespace lunar {
     }
 
     void ShaderProgram::setSequentialIndices(){
-        ebo_indices = std::vector<unsigned int>(vertices.size() / 5);
+        ebo_indices = std::vector<unsigned int>(vertices.size() / 3);
         for (unsigned int i = 0; i < ebo_indices.size(); i++) {
             ebo_indices[i] = i;
         }
@@ -92,7 +93,6 @@ namespace lunar {
 
     void ShaderProgram::setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes){
         assert(names.size() == sizes.size());
-        glGenVertexArrays(1, &VAO);
         
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -119,16 +119,16 @@ namespace lunar {
         setInt(texture.name, texture.getID());
     }
 
-    void ShaderProgram::setTransform(const glm::mat4 &mat) const {
-        setMat4("transform", mat);
-    }
-
     void ShaderProgram::setInt(const std::string &name, int value) const {
         glUniform1i(glGetUniformLocation(program_id, name.c_str()), value);
     }
 
     void ShaderProgram::setMat4(const std::string &name, const glm::mat4 &mat) const {
         glUniformMatrix4fv(glGetUniformLocation(program_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+
+    void ShaderProgram::setVec3(const std::string &name, const glm::vec3 &vec) const {
+        glUniform3fv(glGetUniformLocation(program_id, name.c_str()), 1, glm::value_ptr(vec));
     }
     
     void ShaderProgram::unbindBuffers() const {

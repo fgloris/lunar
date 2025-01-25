@@ -65,16 +65,16 @@ public:
     }
     void bindAllCallbacks(const std::string& path, GLFWwindow* window);
     void registerCallback(const std::string& name, EventCallbackFunction callback);
-
-    inline static bool bound = false;
-    inline static bool registered = false;
-
+    
     void clearCallbacks() {
         registered_callbacks.clear();
         all_callbacks.clear();
         registered = false;
         bound = false;
     }
+
+    inline static bool bound = false;
+    inline static bool registered = false;
 
 private:
     Interface() = default;

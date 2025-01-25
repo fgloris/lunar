@@ -106,7 +106,7 @@ int main() {
         model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.0f, 0.0f));
 
         shader_program.use();
-        shader_program.setTransform(camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
+        shader_program.setMat4("transform", camera.computeProjectionMatrix() * camera.computeViewMatrix() * model);
         shader_program.draw();
         window.swapBuffers();
         window.pollEvents();
