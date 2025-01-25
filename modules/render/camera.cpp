@@ -111,6 +111,14 @@ namespace lunar{
         }
     }
 
+    void Camera::MoveUp(const Event& event){
+        camera_pos += 0.1f * move_speed * camera_up;
+    }
+
+    void Camera::MoveDown(const Event& event){
+        camera_pos -= 0.1f * move_speed * camera_up;
+    }
+
     void Camera::Rotate(const Event& event){
         camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.xoffset * rotate_speed), camera_up));
         camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.yoffset * rotate_speed), camera_right));

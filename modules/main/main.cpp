@@ -35,7 +35,7 @@ int main() {
     lunar::ShaderProgram light_shader_program(light_vertex_shader_code, light_fragment_shader_code);
 
     // 设置顶点属性
-    box_shader_program.setVertexDataProperty({"position", "normal"}, {3, 3});
+    box_shader_program.setVertexDataProperty({"position", "normal", "TexCoords"}, {3, 3, 2});
     light_shader_program.setVertexDataProperty({"position"}, {3});
 
     // 设置立方体顶点数据
@@ -83,53 +83,53 @@ int main() {
         {-0.5f,  0.5f, -0.5f}, 
     };
 
-    std::vector<lunar::VertexData<6>> box_vertices = {
-        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f},
-        { 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
-        { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
-        { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
-        {-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
-        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
-        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        { 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
-        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
-        {-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
-        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
-        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
-        {-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
-        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
-        { 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
-        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
-        { 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
-        { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
-        { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
-        {-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
-        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
-        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f},
-        { 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f},
-        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
-        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
-        {-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
-        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f}
+    std::vector<lunar::VertexData<8>> box_vertices = {
+            {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f},
+            { 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f},
+            { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f},
+            { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f},
+            {-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f},
+            {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f},
+            { 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f},
+            { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f},
+            {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f},
+            {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f},
+            {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+            {-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+            {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+            {-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f},
+            {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+            { 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+            { 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+            {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f},
+            { 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f},
+            { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f},
+            { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f},
+            {-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f},
+            {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f},
+            {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f},
+            { 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f},
+            { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f},
+            { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f},
+            {-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f},
+            {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f}
     };
 
 
-    box_shader_program.setVertices<6>(box_vertices);
+    box_shader_program.setVertices<8>(box_vertices);
     light_shader_program.setVertices<3>(light_vertices);
 
     box_shader_program.setSequentialIndices();
     light_shader_program.setSequentialIndices();
 
-    lunar::Camera camera(glm::vec3(0.0f, 1.0f, 5.0f));
+    lunar::Camera camera(glm::vec3(0.0f, -1.0f, 5.0f));
 
     lunar::Interface& interface = lunar::Interface::getInstance();
 
@@ -142,6 +142,8 @@ int main() {
     interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, &camera, std::placeholders::_1));
     interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, &camera, std::placeholders::_1));
     interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, &camera));
+    interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, &camera, std::placeholders::_1));
 
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
@@ -154,7 +156,12 @@ int main() {
     box_shader_program.setMat3("normalMatrix", box_normal_matrix);
     box_shader_program.setMat4("model", box_model);
 
-    lunar::Material material = lunar::Model::materials["gold"];
+    // 创建纹理材质
+    lunar::MaterialTexture material{
+        .diffuse = 0,    // 对应diffuseMap的纹理单元
+        .specular = 1,   // 对应specularMap的纹理单元
+        .shininess = 32.0f
+    };
 
     lunar::Light light{
         .position = glm::vec3(0.0f),
@@ -164,6 +171,29 @@ int main() {
         .specular = glm::vec3(1.0f, 1.0f, 1.0f)
     };
 
+    // 加载纹理
+    lunar::Texture diffuseMap("../assets/container2.png", 0, 
+        GL_REPEAT,
+        GL_LINEAR,
+        GL_NEAREST,
+        GL_RGBA,
+        GL_RGBA,
+        true,
+        true
+    );
+
+    lunar::Texture specularMap("../assets/container2_specular.png", 1,
+        GL_REPEAT, 
+        GL_LINEAR,
+        GL_NEAREST,
+        GL_RGBA,
+        GL_RGBA,
+        true,
+        true
+    );
+
+    box_shader_program.useTexture(diffuseMap);
+    box_shader_program.useTexture(specularMap);
     box_shader_program.setUniformStruct("material", material);
     box_shader_program.setUniformStruct("light", light);
 
@@ -186,7 +216,7 @@ int main() {
         // 更新光源模型矩阵
         glm::mat4 view = camera.computeViewMatrix();
         glm::mat4 projection = camera.computeProjectionMatrix();
-
+        
         // 渲染箱子
         box_shader_program.use();
         box_shader_program.setVec3("light.position", lightPos);  // 使用更新后的光源位置

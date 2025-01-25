@@ -27,6 +27,12 @@ namespace lunar {
         glm::vec3 specular;
     };
 
+    struct MaterialTexture {
+        unsigned int diffuse;    // 漫反射贴图的纹理单元
+        unsigned int specular;   // 镜面光贴图的纹理单元
+        float shininess;
+    };
+
     class Shader {
     public:
         Shader(int shader_type, const std::string& shader_code);
@@ -78,6 +84,11 @@ namespace lunar {
                 setVec3(name + ".ambient", data.ambient);
                 setVec3(name + ".diffuse", data.diffuse);
                 setVec3(name + ".specular", data.specular);
+                setFloat(name + ".shininess", data.shininess);
+            }
+            else if constexpr (std::is_same_v<T, MaterialTexture>) {
+                setInt(name + ".diffuse", data.diffuse);
+                setInt(name + ".specular", data.specular);
                 setFloat(name + ".shininess", data.shininess);
             }
             else if constexpr (std::is_same_v<T, Light>) {

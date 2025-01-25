@@ -36,7 +36,7 @@ Texture::Texture(const std::string &filename,
 }
 
 void Texture::use() const {
-    glActiveTexture(GL_TEXTURE0 + id);  // 始终使用纹理单元0
+    glActiveTexture(GL_TEXTURE0 + id);  // 激活对应的纹理单元
     glBindTexture(GL_TEXTURE_2D, texture);
 }
 

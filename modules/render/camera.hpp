@@ -21,6 +21,8 @@ class Camera{
     void MoveBackward(const Event& event);
     void MoveLeft(const Event& event);
     void MoveRight(const Event& event);
+    void MoveUp(const Event& event);
+    void MoveDown(const Event& event);
     [[nodiscard]] glm::vec3 getPosition() const {return camera_pos;}
 
     inline static float zoom_speed = 2.0f;
