@@ -83,7 +83,17 @@ namespace lunar {
     }
 
     void ShaderProgram::setSequentialIndices(){
-        ebo_indices = std::vector<unsigned int>(vertices.size() / 3);
+        if (stride == 0) throw std::runtime_error("please indicate number of vertices");
+        ebo_indices = std::vector<unsigned int>(vertices.size() / stride);
+        for (unsigned int i = 0; i < ebo_indices.size(); i++) {
+            ebo_indices[i] = i;
+        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo_indices.size() * sizeof(unsigned int), &ebo_indices[0], GL_STATIC_DRAW);
+    }
+
+    void ShaderProgram::setSequentialIndices(unsigned int size){
+        ebo_indices = std::vector<unsigned int>(size);
         for (unsigned int i = 0; i < ebo_indices.size(); i++) {
             ebo_indices[i] = i;
         }
@@ -112,6 +122,7 @@ namespace lunar {
             glEnableVertexAttribArray(i);
             offset += sizes[i];
         }
+        this->stride = stride;
     }
     
     void ShaderProgram::useTexture(const Texture& texture) const {
@@ -125,6 +136,10 @@ namespace lunar {
 
     void ShaderProgram::setMat4(const std::string &name, const glm::mat4 &mat) const {
         glUniformMatrix4fv(glGetUniformLocation(program_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+
+    void ShaderProgram::setMat3(const std::string &name, const glm::mat3 &mat) const {
+        glUniformMatrix3fv(glGetUniformLocation(program_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
     }
 
     void ShaderProgram::setVec3(const std::string &name, const glm::vec3 &vec) const {

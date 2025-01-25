@@ -3,6 +3,7 @@
 #include "render/camera.hpp"
 #include "render/texture.hpp"
 #include "interface/interface.hpp"
+#include "model/model.hpp"
 #include <iostream>
 #include <functional>
 
@@ -33,11 +34,11 @@ int main() {
     lunar::ShaderProgram light_shader_program(light_vertex_shader_code, light_fragment_shader_code);
 
     // 设置顶点属性
-    box_shader_program.setVertexDataProperty({"position"}, {3});
+    box_shader_program.setVertexDataProperty({"position", "normal"}, {3, 3});
     light_shader_program.setVertexDataProperty({"position"}, {3});
 
     // 设置立方体顶点数据
-    std::vector<lunar::VertexData<3>> vertices = {
+    std::vector<lunar::VertexData<3>> light_vertices = {
         {-0.5f, -0.5f, -0.5f}, 
         { 0.5f, -0.5f, -0.5f},  
         { 0.5f,  0.5f, -0.5f},  
@@ -80,11 +81,49 @@ int main() {
         {-0.5f,  0.5f,  0.5f}, 
         {-0.5f,  0.5f, -0.5f}, 
     };
-    
+
+    std::vector<lunar::VertexData<6>> box_vertices = {
+        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f},
+        { 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
+        { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
+        { 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
+        {-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
+        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f}, 
+        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        { 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        { 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f},
+        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
+        {-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
+        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
+        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f},
+        {-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
+        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
+        { 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
+        { 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
+        { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
+        { 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f},
+        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f},
+        { 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f},
+        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
+        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
+        {-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f},
+        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f}
+    };
 
 
-    box_shader_program.setVertices<3>(vertices);
-    light_shader_program.setVertices<3>(vertices);
+    box_shader_program.setVertices<6>(box_vertices);
+    light_shader_program.setVertices<3>(light_vertices);
 
     box_shader_program.setSequentialIndices();
     light_shader_program.setSequentialIndices();
@@ -108,12 +147,15 @@ int main() {
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
     glm::mat4 box_model = glm::mat4(1.0f);
-    glm::mat4 light_model = glm::mat4(1.0f);
     box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
+
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::mat4 light_model = glm::mat4(1.0f);
     light_model = glm::translate(light_model, lightPos);
     light_model = glm::scale(light_model, glm::vec3(0.2f));
+
     glEnable(GL_DEPTH_TEST);
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -121,8 +163,15 @@ int main() {
 
         // 渲染箱子
         box_shader_program.use();
-        box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f)); // 珊瑚红
-        box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));   // 白光
+        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
+        box_shader_program.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+        box_shader_program.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        box_shader_program.setVec3("lightPos", lightPos);
+        box_shader_program.setVec3("viewPos", camera.getPosition());
+        
+        // 更新法线矩阵
+        glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
+        box_shader_program.setMat3("normalMatrix", box_normal_matrix);
         
         glm::mat4 view = camera.computeViewMatrix();
         glm::mat4 projection = camera.computeProjectionMatrix();

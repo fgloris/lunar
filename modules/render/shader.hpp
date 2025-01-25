@@ -30,6 +30,7 @@ namespace lunar {
         void draw() const;
         void setIndices(std::vector<unsigned int> indices);
         void setSequentialIndices();
+        void setSequentialIndices(unsigned int size);
         template<unsigned int N>
         void setVertices(std::vector<VertexData<N>> vertices){
             const float* raw_data = reinterpret_cast<const float*>(vertices.data());
@@ -38,10 +39,12 @@ namespace lunar {
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(float), &this->vertices[0], GL_STATIC_DRAW);
+            stride = N;
         }
         void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
         void useTexture(const Texture& texture) const;
         void setInt(const std::string &name, int value) const;
+        void setMat3(const std::string &name, const glm::mat3 &mat) const;
         void setMat4(const std::string &name, const glm::mat4 &mat) const;
         void setVec3(const std::string &name, const glm::vec3 &vec) const;
         [[nodiscard]] unsigned int getID() const {return program_id;}
@@ -56,5 +59,6 @@ namespace lunar {
         unsigned int vertex_data_size;
         unsigned int VBO, EBO, VAO; // Vertex Buffer Object, Vertex Array Object, Element Buffer Object
         unsigned int program_id;
+        unsigned int stride{0};
     };
 }

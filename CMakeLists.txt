@@ -42,6 +42,7 @@ add_subdirectory(3rdparties/glad)
 add_subdirectory(3rdparties/stb_image)
 add_subdirectory(modules/render)
 add_subdirectory(modules/interface)
+add_subdirectory(modules/model)
 
 if(NOT DEBUG OR NDEBUG)
     add_compile_definitions(NDEBUG)

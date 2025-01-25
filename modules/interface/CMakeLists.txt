@@ -1,6 +1,3 @@
-find_package(glm CONFIG REQUIRED)
-find_package(glfw3 REQUIRED)
-
 file(GLOB SRC_FILES *.cpp)
 
 set(SUB_LIBRARY_NAME interface)
