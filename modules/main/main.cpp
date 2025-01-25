@@ -172,25 +172,8 @@ int main() {
     };
 
     // 加载纹理
-    lunar::Texture diffuseMap("../assets/container2.png", 0, 
-        GL_REPEAT,
-        GL_LINEAR,
-        GL_NEAREST,
-        GL_RGBA,
-        GL_RGBA,
-        true,
-        true
-    );
-
-    lunar::Texture specularMap("../assets/container2_specular.png", 1,
-        GL_REPEAT, 
-        GL_LINEAR,
-        GL_NEAREST,
-        GL_RGBA,
-        GL_RGBA,
-        true,
-        true
-    );
+    lunar::Texture diffuseMap("../assets/container2.png", 0);
+    lunar::Texture specularMap("../assets/container2_specular.png", 1);
 
     box_shader_program.useTexture(diffuseMap);
     box_shader_program.useTexture(specularMap);

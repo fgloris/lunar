@@ -68,14 +68,7 @@ int main() {
     shader_program.setSequentialIndices();
 
     lunar::Texture texture1("../assets/container.jpg", 0);
-    lunar::Texture texture2("../assets/awesomeface.png", 1,
-                            GL_MIRRORED_REPEAT,
-                            GL_LINEAR,
-                            GL_NEAREST,
-                            GL_RGBA,
-                            GL_RGBA,
-                            false,
-                            true);
+    lunar::Texture texture2("../assets/awesomeface.png", 1);
     
     shader_program.use();
     shader_program.useTexture(texture1);
@@ -94,7 +87,8 @@ int main() {
     interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, &camera, std::placeholders::_1));
     interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, &camera, std::placeholders::_1));
     interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, &camera));
-
+    interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, &camera, std::placeholders::_1));
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 

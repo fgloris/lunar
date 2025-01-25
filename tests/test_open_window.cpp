@@ -87,14 +87,7 @@ protected:
 
     void setupTextures() {
         texture1 = std::make_unique<lunar::Texture>("../assets/container.jpg", 0);
-        texture2 = std::make_unique<lunar::Texture>("../assets/awesomeface.png", 1,
-                                GL_MIRRORED_REPEAT,
-                                GL_LINEAR,
-                                GL_NEAREST,
-                                GL_RGBA,
-                                GL_RGBA,
-                                false,
-                                true);
+        texture2 = std::make_unique<lunar::Texture>("../assets/awesomeface.png", 1);
         
         shader_program->use();
         shader_program->useTexture(*texture1);
@@ -117,7 +110,8 @@ protected:
         interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, camera.get(), std::placeholders::_1));
         interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, camera.get()));
         interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, camera.get(), std::placeholders::_1));
-        
+        interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, camera.get(), std::placeholders::_1));
+        interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, camera.get(), std::placeholders::_1));
         interface.bindAllCallbacks("../modules/config/interface.yaml", window->getHandle());
     }
 
