@@ -1,8 +1,8 @@
 #include "render/window.hpp"
 #include "render/shader.hpp"
 #include "render/camera.hpp"
-#include "render/texture.hpp"
 #include "interface/interface.hpp"
+#include "model/texture.hpp"
 #include "model/model.hpp"
 #include <iostream>
 #include <functional>

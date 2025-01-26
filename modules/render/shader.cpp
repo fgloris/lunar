@@ -1,4 +1,5 @@
 #include "shader.hpp"
+#include "model/texture.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>

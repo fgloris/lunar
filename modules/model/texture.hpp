@@ -1,8 +1,14 @@
 #pragma once
 #include "stb_image/stb_image.h"
-#include "window.hpp"
+#include <glad/glad.h>
+#include <string>
 
 namespace lunar{
+
+enum class TextureType{
+    Specular,
+    Diffuse
+};
 
 class Texture{
 public:
@@ -20,7 +26,6 @@ public:
     std::string name;
 private:
     unsigned int texture, id;
-    int width, height, nr_channels;
 };
 
 }

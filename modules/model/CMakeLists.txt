@@ -11,5 +11,5 @@ target_include_directories(${SUB_LIBRARY_NAME} PUBLIC
 )
 
 target_link_libraries(${SUB_LIBRARY_NAME}
-    PRIVATE glad fmt
+    PRIVATE glad fmt stb_image
 )

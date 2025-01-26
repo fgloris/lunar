@@ -18,7 +18,7 @@ Texture::Texture(const std::string &filename,
     stbi_set_flip_vertically_on_load(flip_y);
     
     // 加载图片并获取通道数
-    int channels;
+    int width, height, channels;
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
     
     // 根据通道数选择合适的格式

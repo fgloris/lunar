@@ -3,8 +3,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> 
-#include "texture.hpp"
 #include <type_traits>
+#include "model/texture.hpp"
 
 namespace lunar {
 

@@ -68,4 +68,12 @@ class General {
     static std::map<float, std::pair<double, double>> point_attenuation_factors;
 };
 
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 tex_coords;
+};
+
+
+
 }
