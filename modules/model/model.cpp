@@ -1,5 +1,4 @@
 #include "model.hpp"
-#include "render/shader.hpp"
 
 namespace lunar {
 
@@ -154,5 +153,42 @@ std::map<std::string, Material> Model::materials = {
         .shininess = 0.078125f * 128
     }}
 };
+
+std::map<float, std::pair<double, double>> Model::point_attenuation_factors = {
+    {3250, {0.0014, 0.000007}},
+    {600, {0.007, 0.0002}},
+    {325, {0.014, 0.0007}},
+    {200, {0.022, 0.0019}},
+    {160, {0.027, 0.0028}},
+    {100, {0.045, 0.0075}},
+    {65, {0.07, 0.017}},
+    {50, {0.09, 0.032}},
+    {32, {0.14, 0.07}},
+    {20, {0.22, 0.20}},
+    {13, {0.35, 0.44}},
+    {7, {0.7, 1.8}}
+};
+
+std::pair<double, double> Model::getPointAttenuationFactor(float distance) {
+    auto it = point_attenuation_factors.lower_bound(distance);
+
+    if (it == point_attenuation_factors.end()) {
+        return point_attenuation_factors.rbegin()->second;
+    }
+    
+    if (it == point_attenuation_factors.begin()) {
+        return it->second;
+    }
+    
+    auto high = it;
+    auto low = std::prev(it);
+    
+    float t = (distance - low->first) / (high->first - low->first);
+    
+    return {
+        low->second.first * (1 - t) + high->second.first * t,
+        low->second.second * (1 - t) + high->second.second * t
+    };
+}
 
 }

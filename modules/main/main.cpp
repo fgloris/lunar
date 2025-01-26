@@ -163,7 +163,7 @@ int main() {
         .shininess = 32.0f
     };
 
-    lunar::Light light{
+    lunar::StrongPointLight light{
         .position = glm::vec3(0.0f),
         .color = glm::vec3(1.0f, 1.0f, 1.0f),
         .ambient = glm::vec3(0.2f, 0.2f, 0.2f),
