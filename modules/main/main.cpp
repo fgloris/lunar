@@ -181,6 +181,10 @@ int main() {
     box_shader_program.setUniformStruct("light", light);
 
     glEnable(GL_DEPTH_TEST);
+
+    auto a = lunar::Model::getPointAttenuationFactor(90.0f);
+    std::cout<<a.first<<std::endl;
+    std::cout<<a.second<<std::endl;
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

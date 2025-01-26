@@ -166,14 +166,23 @@ std::map<float, std::pair<double, double>> Model::point_attenuation_factors = {
     {32, {0.14, 0.07}},
     {20, {0.22, 0.20}},
     {13, {0.35, 0.44}},
-    {7, {0.7, 1.8}}
+    {7, {0.7, 1.8}},
+    {1, {1.4, 3.6}}
 };
 
 std::pair<double, double> Model::getPointAttenuationFactor(float distance) {
     auto it = point_attenuation_factors.lower_bound(distance);
 
     if (it == point_attenuation_factors.end()) {
-        return point_attenuation_factors.rbegin()->second;
+        auto last = point_attenuation_factors.rbegin();
+        auto second_last = std::next(point_attenuation_factors.rbegin());
+        
+        float t = (distance - last->first) / (last->first - second_last->first);
+        
+        return {
+            last->second.first + (last->second.first - second_last->second.first) * t,
+            last->second.second + (last->second.second - second_last->second.second) * t
+        };
     }
     
     if (it == point_attenuation_factors.begin()) {
