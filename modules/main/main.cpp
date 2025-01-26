@@ -150,7 +150,7 @@ int main() {
 
     glm::mat4 box_model = glm::mat4(1.0f);
     box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat3 box_normal_matrix = lunar::Model::getNormalMatrix(box_model);
+    glm::mat3 box_normal_matrix = lunar::General::getNormalMatrix(box_model);
 
     box_shader_program.use();
     box_shader_program.setMat3("normalMatrix", box_normal_matrix);
@@ -182,9 +182,6 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    auto a = lunar::Model::getPointAttenuationFactor(90.0f);
-    std::cout<<a.first<<std::endl;
-    std::cout<<a.second<<std::endl;
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

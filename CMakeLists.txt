@@ -38,6 +38,23 @@ else()
     add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparties/yaml-cpp)
 endif()
 
+if (REFETCH OR NOT EXISTS ${CMAKE_SOURCE_DIR}/3rdparties/assimp)
+    message(WARNING "Attempting to fetch Assimp...")
+    FetchContent_Declare(
+        assimp
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/3rdparties/assimp
+        URL 
+            https://github.com/assimp/assimp/archive/refs/tags/v5.4.3.zip
+            https://github.com/assimp/assimp/archive/refs/tags/v5.4.3.tar.gz
+
+        GIT_PROGRESS TRUE
+        DOWNLOAD_NO_PROGRESS FALSE
+    )
+    FetchContent_MakeAvailable(assimp)
+else()
+    add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparties/assimp)
+endif()
+
 add_subdirectory(3rdparties/glad)
 add_subdirectory(3rdparties/stb_image)
 add_subdirectory(modules/render)

@@ -59,10 +59,8 @@ struct MaterialTexture {
     float shininess;
 };
 
-class Model {
+class General {
     public:
-    Model();
-    ~Model();
     static std::pair<double, double> getPointAttenuationFactor(float distance);
     
     static glm::mat3 getNormalMatrix(glm::mat4 model);

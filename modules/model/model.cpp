@@ -2,12 +2,12 @@
 
 namespace lunar {
 
-glm::mat3 Model::getNormalMatrix(glm::mat4 model) {
+glm::mat3 General::getNormalMatrix(glm::mat4 model) {
     return glm::mat3(glm::transpose(glm::inverse(model)));
 }
 
 //from http://devernay.free.fr/cours/opengl/materials.html
-std::map<std::string, Material> Model::materials = {
+std::map<std::string, Material> General::materials = {
     {"emerald", {
         .ambient = glm::vec3(0.0215f, 0.1745f, 0.0215f),
         .diffuse = glm::vec3(0.07568f, 0.61424f, 0.07568f),
@@ -154,7 +154,7 @@ std::map<std::string, Material> Model::materials = {
     }}
 };
 
-std::map<float, std::pair<double, double>> Model::point_attenuation_factors = {
+std::map<float, std::pair<double, double>> General::point_attenuation_factors = {
     {3250, {0.0014, 0.000007}},
     {600, {0.007, 0.0002}},
     {325, {0.014, 0.0007}},
@@ -170,7 +170,7 @@ std::map<float, std::pair<double, double>> Model::point_attenuation_factors = {
     {1, {1.4, 3.6}}
 };
 
-std::pair<double, double> Model::getPointAttenuationFactor(float distance) {
+std::pair<double, double> General::getPointAttenuationFactor(float distance) {
     auto it = point_attenuation_factors.lower_bound(distance);
 
     if (it == point_attenuation_factors.end()) {

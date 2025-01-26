@@ -4,4 +4,5 @@ clion-build/
 package/
 3rdparties/fmt/
 3rdparties/googletest/
+3rdparties/assimp/
 interface.yaml
