@@ -4,6 +4,7 @@
 #include "interface/interface.hpp"
 #include "model/texture.hpp"
 #include "model/model.hpp"
+#include "model/material.hpp"
 #include <iostream>
 #include <functional>
 #include <cmath>
@@ -172,11 +173,15 @@ int main() {
     };
 
     // 加载纹理
-    lunar::Texture diffuseMap("../assets/container2.png", 0);
-    lunar::Texture specularMap("../assets/container2_specular.png", 1);
+    lunar::Texture diffuseMap("../assets/container2.png", lunar::TextureType::Diffuse);
+    lunar::Texture specularMap("../assets/container2_specular.png", lunar::TextureType::Specular);
 
-    box_shader_program.useTexture(diffuseMap);
-    box_shader_program.useTexture(specularMap);
+    box_shader_program.setInt("material.diffuse", diffuseMap.id);
+    glActiveTexture(GL_TEXTURE0 + material.diffuse);
+    glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
+    box_shader_program.setInt("material.specular", specularMap.id);
+    glActiveTexture(GL_TEXTURE0 + material.specular);
+    glBindTexture(GL_TEXTURE_2D, specularMap.id);
     box_shader_program.setUniformStruct("material", material);
     box_shader_program.setUniformStruct("light", light);
 

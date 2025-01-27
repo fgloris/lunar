@@ -2,6 +2,7 @@
 #include "stb_image/stb_image.h"
 #include <glad/glad.h>
 #include <string>
+#include <vector>
 
 namespace lunar{
 
@@ -10,10 +11,9 @@ enum class TextureType{
     Diffuse
 };
 
-class Texture{
-public:
+struct Texture{
     Texture(const std::string &filename,
-    const unsigned int id,
+    TextureType type = TextureType::Diffuse,
     const unsigned int expand_param = GL_MIRRORED_REPEAT,
     const unsigned int filter_param_max = GL_LINEAR,
     const unsigned int filter_param_min = GL_NEAREST,
@@ -21,11 +21,8 @@ public:
     bool flip_y = false
     );
     ~Texture();
-    void use() const;
-    unsigned int getID() const {return id;}
-    std::string name;
-private:
-    unsigned int texture, id;
+    unsigned int id;
+    std::string path;
+    TextureType type;
 };
-
 }

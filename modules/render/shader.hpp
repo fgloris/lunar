@@ -49,7 +49,6 @@ public:
         stride = N;
     }
     void setVertexDataProperty(std::vector<std::string> names, std::vector<unsigned int> sizes);
-    void useTexture(const Texture& texture) const;
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;
     void setVec2(const std::string &name, const glm::vec2 &vec) const;

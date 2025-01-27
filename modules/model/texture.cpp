@@ -5,16 +5,15 @@
 namespace lunar{
 
 Texture::Texture(const std::string &filename,
-    const unsigned int id,
+    TextureType type,
     const unsigned int expand_param,
     const unsigned int filter_param_max,
     const unsigned int filter_param_min,
     bool generate_mitmap,
     bool flip_y
-    ):id(id){
-    name = std::string("texture")+std::to_string(id);
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    ):type(type){
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
     stbi_set_flip_vertically_on_load(flip_y);
     
     // 加载图片并获取通道数
@@ -45,13 +44,8 @@ Texture::Texture(const std::string &filename,
     stbi_image_free(data);
 }
 
-void Texture::use() const {
-    glActiveTexture(GL_TEXTURE0 + id);  // 激活对应的纹理单元
-    glBindTexture(GL_TEXTURE_2D, texture);
-}
-
 Texture::~Texture(){
-    glDeleteTextures(1, &texture);
+    glDeleteTextures(1, &id);
 }
 
 }
