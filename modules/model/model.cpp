@@ -6,25 +6,24 @@
 
 namespace lunar {
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures):
-    vertices(vertices), indices(indices), textures(textures) {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, float shininess):
+    vertices(vertices), indices(indices), textures(textures), shininess(shininess) {
     init();
 }
 
-void Mesh::Draw(ShaderProgram &shader, unsigned int dif, unsigned int spec) {
-    MaterialTexture material{
-        .diffuse = 0,    // 对应diffuseMap的纹理单元
-        .specular = 1,   // 对应specularMap的纹理单元
-        .shininess = 32.0f
-    };
-
-    
-
-    glActiveTexture(GL_TEXTURE0 + material.diffuse);
-    glBindTexture(GL_TEXTURE_2D, dif);
-    glActiveTexture(GL_TEXTURE0 + material.specular);
-    glBindTexture(GL_TEXTURE_2D, spec);
-    shader.setUniformStruct("material", material);
+void Mesh::Draw(ShaderProgram &shader) {
+    for(unsigned int i = 0; i < textures.size(); i++){
+        glActiveTexture(GL_TEXTURE0 + i);
+        std::string name;
+        TextureType type = textures[i].type;
+        if(type == TextureType::Diffuse)
+            name = std::string("material.diffuse");
+        else if(type == TextureType::Specular)
+            name = std::string("material.specular");
+        shader.setInt(name.c_str(), i);
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    }
+    shader.setFloat("material.shininess", shininess);
     // 绘制网格
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -151,11 +150,11 @@ Model::Model(std::string path) {
     normal_matrix = lunar::General::getNormalMatrix(model);
 }
 
-void Model::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
+void Model::Draw(ShaderProgram &shader) {
     shader.setMat3("normalMatrix", normal_matrix);
     shader.setMat4("model", model);
     for(auto &mesh : meshes) {
-        mesh.Draw(shader, dif.id, spec.id);
+        mesh.Draw(shader);
     }
 }
 

@@ -159,7 +159,7 @@ int main() {
         box_shader_program.setMat4("projection", projection);
         
 
-        ourModel.Draw(box_shader_program, diffuseMap, specularMap);
+        ourModel.Draw(box_shader_program);
 
         // 渲染光源立方体
         light_shader_program.use();
