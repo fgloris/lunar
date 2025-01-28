@@ -186,7 +186,6 @@ int main() {
             }
             std::cout << "OpenGL错误 " << "Draw" << ": " << errorMsg << std::endl;
         }
-        glActiveTexture(GL_TEXTURE0);
     }
 
     return 0;

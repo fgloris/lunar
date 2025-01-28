@@ -11,7 +11,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     init();
 }
 
-void Mesh::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
+void Mesh::Draw(ShaderProgram &shader, unsigned int dif, unsigned int spec) {
     MaterialTexture material{
         .diffuse = 0,    // 对应diffuseMap的纹理单元
         .specular = 1,   // 对应specularMap的纹理单元
@@ -19,9 +19,9 @@ void Mesh::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
     };
 
     glActiveTexture(GL_TEXTURE0 + material.diffuse);
-    glBindTexture(GL_TEXTURE_2D, dif.id);
+    glBindTexture(GL_TEXTURE_2D, dif);
     glActiveTexture(GL_TEXTURE0 + material.specular);
-    glBindTexture(GL_TEXTURE_2D, textures[0].id);
+    glBindTexture(GL_TEXTURE_2D, spec);
     shader.setUniformStruct("material", material);
     // 绘制网格
     glBindVertexArray(VAO);
@@ -111,31 +111,33 @@ Mesh ModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        loadMaterialTextures(textures, material, aiTextureType_DIFFUSE);
+        loadMaterialTextures(textures, material, aiTextureType_SPECULAR);
     }
 
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type) {
-    std::vector<Texture> textures;
+void ModelLoader::loadMaterialTextures(std::vector<Texture>& textures, aiMaterial *mat, aiTextureType type) {
+    TextureType texture_type;
+    if (type == aiTextureType_DIFFUSE) {
+        texture_type = TextureType::Diffuse;
+    }else if (type == aiTextureType_SPECULAR) {
+        texture_type = TextureType::Specular;
+    }
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string path = directory + '/' + str.C_Str();
         auto it = std::find(textures_loaded.begin(), textures_loaded.end(), path);
         if (it == textures_loaded.end()) {
-            Texture texture(path, type==aiTextureType_DIFFUSE?TextureType::Diffuse:TextureType::Specular);
+            Texture texture(path, texture_type);
             textures.push_back(texture);
             textures_loaded.push_back(texture);
         }else{
             textures.push_back(*it);
         }
     }
-    return textures;
 }
 
 } // namespace detail
@@ -151,7 +153,7 @@ void Model::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
     shader.setMat3("normalMatrix", normal_matrix);
     shader.setMat4("model", model);
     for(auto &mesh : meshes) {
-        mesh.Draw(shader, dif, spec);
+        mesh.Draw(shader, dif.id, spec.id);
     }
 }
 
