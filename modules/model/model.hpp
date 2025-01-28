@@ -24,7 +24,7 @@ public:
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-    void Draw(ShaderProgram &shader);
+    void Draw(ShaderProgram &shader, Texture& dif, Texture& spec);
 private:
     unsigned int VAO, VBO, EBO;
     void init();
@@ -33,7 +33,7 @@ private:
 class Model {
 public:
     explicit Model(std::string path);
-    void Draw(ShaderProgram &shader);   
+    void Draw(ShaderProgram &shader, Texture& dif, Texture& spec);   
 private:
     std::vector<Mesh> meshes;
     glm::mat4 model;

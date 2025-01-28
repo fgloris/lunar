@@ -32,7 +32,6 @@ int main() {
     #include "GLSL/light-fs.glsl"
     ;
 
-    lunar::Model ourModel("../assets/backpack/backpack.obj");
     lunar::ShaderProgram box_shader_program(box_vertex_shader_code, box_fragment_shader_code);
     lunar::ShaderProgram light_shader_program(light_vertex_shader_code, light_fragment_shader_code);
 
@@ -121,23 +120,19 @@ int main() {
     };
 
     // 加载纹理
-    /*
+    
     box_shader_program.use();
+    lunar::Model ourModel("../assets/backpack/backpack.obj");
+
+    
     lunar::Texture diffuseMap("../assets/backpack/diffuse.jpg", lunar::TextureType::Diffuse);
     lunar::Texture specularMap("../assets/backpack/specular.jpg", lunar::TextureType::Specular);
+    
 
-    box_shader_program.setInt("material.diffuse", diffuseMap.id);
-    glActiveTexture(GL_TEXTURE0 + material.diffuse);
-    glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
-    box_shader_program.setInt("material.specular", specularMap.id);
-    glActiveTexture(GL_TEXTURE0 + material.specular);
-    glBindTexture(GL_TEXTURE_2D, specularMap.id);
-    box_shader_program.setUniformStruct("material", material);
     box_shader_program.setUniformStruct("light", light);
-    */
-
     glEnable(GL_DEPTH_TEST);
 
+    GLenum error;
     while (!window.shouldClose()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -167,7 +162,8 @@ int main() {
         box_shader_program.setMat4("view", view);
         box_shader_program.setMat4("projection", projection);
         
-        ourModel.Draw(box_shader_program);
+
+        ourModel.Draw(box_shader_program, diffuseMap, specularMap);
 
         // 渲染光源立方体
         light_shader_program.use();
@@ -179,6 +175,18 @@ int main() {
 
         window.swapBuffers();
         window.pollEvents();
+        if ((error = glGetError()) != GL_NO_ERROR) {
+            std::string errorMsg;
+            switch (error) {
+                case GL_INVALID_ENUM:       errorMsg = "GL_INVALID_ENUM"; break;
+                case GL_INVALID_VALUE:      errorMsg = "GL_INVALID_VALUE"; break;
+                case GL_INVALID_OPERATION:  errorMsg = "GL_INVALID_OPERATION"; break;
+                case GL_OUT_OF_MEMORY:      errorMsg = "GL_OUT_OF_MEMORY"; break;
+                default:                    errorMsg = "UNKNOWN"; break;
+            }
+            std::cout << "OpenGL错误 " << "Draw" << ": " << errorMsg << std::endl;
+        }
+        glActiveTexture(GL_TEXTURE0);
     }
 
     return 0;

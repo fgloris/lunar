@@ -11,7 +11,8 @@ Texture::Texture(const std::string &filename,
     const unsigned int filter_param_min,
     bool generate_mitmap,
     bool flip_y
-    ):type(type){
+    ):type(type),path(filename){
+    
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     stbi_set_flip_vertically_on_load(flip_y);

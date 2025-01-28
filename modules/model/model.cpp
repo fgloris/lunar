@@ -11,20 +11,18 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     init();
 }
 
-void Mesh::Draw(ShaderProgram &shader) {
-    for(unsigned int i = 0; i < textures.size(); i++){
-        glActiveTexture(GL_TEXTURE0 + i);
-        std::string name;
-        TextureType type = textures[i].type;
-        if(type == TextureType::Diffuse)
-            name = std::string("material.diffuse");
-        else if(type == TextureType::Specular)
-            name = std::string("material.specular");
-        shader.setInt(name.c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-    glActiveTexture(GL_TEXTURE0);
+void Mesh::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
+    MaterialTexture material{
+        .diffuse = 0,    // 对应diffuseMap的纹理单元
+        .specular = 1,   // 对应specularMap的纹理单元
+        .shininess = 32.0f
+    };
 
+    glActiveTexture(GL_TEXTURE0 + material.diffuse);
+    glBindTexture(GL_TEXTURE_2D, dif.id);
+    glActiveTexture(GL_TEXTURE0 + material.specular);
+    glBindTexture(GL_TEXTURE_2D, textures[0].id);
+    shader.setUniformStruct("material", material);
     // 绘制网格
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -131,7 +129,6 @@ std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextur
         auto it = std::find(textures_loaded.begin(), textures_loaded.end(), path);
         if (it == textures_loaded.end()) {
             Texture texture(path, type==aiTextureType_DIFFUSE?TextureType::Diffuse:TextureType::Specular);
-            texture.setPath(path);
             textures.push_back(texture);
             textures_loaded.push_back(texture);
         }else{
@@ -150,11 +147,11 @@ Model::Model(std::string path) {
     normal_matrix = lunar::General::getNormalMatrix(model);
 }
 
-void Model::Draw(ShaderProgram &shader) {
+void Model::Draw(ShaderProgram &shader, Texture& dif, Texture& spec) {
     shader.setMat3("normalMatrix", normal_matrix);
     shader.setMat4("model", model);
     for(auto &mesh : meshes) {
-        mesh.Draw(shader);
+        mesh.Draw(shader, dif, spec);
     }
 }
 
