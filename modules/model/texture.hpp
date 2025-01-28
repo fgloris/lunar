@@ -25,8 +25,8 @@ struct Texture{
     unsigned int id;
     std::string path;
     TextureType type;
-    bool operator==(const Texture& other) const {
-        return path == other.path;
+    bool operator==(const std::string& other) const {
+        return path == other;
     }
 };
 }

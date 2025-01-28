@@ -12,17 +12,15 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 }
 
 void Mesh::Draw(ShaderProgram &shader) {
-    unsigned int diffuseNr = 0;
-    unsigned int specularNr = 0;
     for(unsigned int i = 0; i < textures.size(); i++){
         glActiveTexture(GL_TEXTURE0 + i);
         std::string name;
         TextureType type = textures[i].type;
         if(type == TextureType::Diffuse)
-            name = std::string("material.diffuse") + std::to_string(diffuseNr++);
+            name = std::string("material.diffuse");
         else if(type == TextureType::Specular)
-            name = std::string("material.specular") + std::to_string(specularNr++);
-        shader.setInt(("material." + name).c_str(), i);
+            name = std::string("material.specular");
+        shader.setInt(name.c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
@@ -130,13 +128,14 @@ std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextur
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string path = directory + '/' + str.C_Str();
-        if (std::find(textures_loaded.begin(), textures_loaded.end(), path) == textures_loaded.end()) {
+        auto it = std::find(textures_loaded.begin(), textures_loaded.end(), path);
+        if (it == textures_loaded.end()) {
             Texture texture(path, type==aiTextureType_DIFFUSE?TextureType::Diffuse:TextureType::Specular);
             texture.setPath(path);
             textures.push_back(texture);
-            textures_loaded.push_back(path);
+            textures_loaded.push_back(texture);
         }else{
-            
+            textures.push_back(*it);
         }
     }
     return textures;

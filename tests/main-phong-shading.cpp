@@ -136,15 +136,15 @@ int main() {
     interface.registerCallback("window_close", std::bind(&lunar::Window::close, &window, std::placeholders::_1));
     interface.registerCallback("window_fullscreen", std::bind(&lunar::Window::fullscreen, &window, std::placeholders::_1));
     interface.registerCallback("window_windowed", std::bind(&lunar::Window::windowed, &window, std::placeholders::_1));
-    interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::MoveLeft, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::moveForward, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::moveBackward, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::moveLeft, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::moveRight, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::rotate, &camera, std::placeholders::_1));
     interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, &camera));
-    interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::moveUp, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::moveDown, &camera, std::placeholders::_1));
+    interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
     glm::mat4 box_model = glm::mat4(1.0f);

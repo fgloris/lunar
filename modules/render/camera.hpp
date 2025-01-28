@@ -15,15 +15,15 @@ class Camera{
     [[nodiscard]] glm::mat4 computeViewMatrix() const;
     [[nodiscard]] glm::mat4 computeProjectionMatrix() const;
     [[nodiscard]] glm::vec3 computeTransformMatrix() const;
-    void resetZoom() {zoom = 45.0f;}
-    void Zoom(const Event& event);
-    void Rotate(const Event& event);
-    void MoveForward(const Event& event);
-    void MoveBackward(const Event& event);
-    void MoveLeft(const Event& event);
-    void MoveRight(const Event& event);
-    void MoveUp(const Event& event);
-    void MoveDown(const Event& event);
+    void resetZoom() {focus = 45.0f;}
+    void zoom(const Event& event);
+    void rotate(const Event& event);
+    void moveForward(const Event& event);
+    void moveBackward(const Event& event);
+    void moveLeft(const Event& event);
+    void moveRight(const Event& event);
+    void moveUp(const Event& event);
+    void moveDown(const Event& event);
     void registerCallback(Interface& interface);
     [[nodiscard]] glm::vec3 getPosition() const {return camera_pos;}
 
@@ -31,7 +31,7 @@ class Camera{
     inline static float rotate_speed = 0.001f;
     inline static float move_speed = 1.0f;
     private:
-    double zoom;
+    double focus;
     glm::vec3 camera_pos, camera_direction, camera_up, camera_right;
 };
 }

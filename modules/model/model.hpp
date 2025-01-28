@@ -48,7 +48,7 @@ public:
 
 private:
     std::string directory;
-    std::vector<std::string> textures_loaded;
+    std::vector<Texture> textures_loaded;
     
     std::vector<Mesh> processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);

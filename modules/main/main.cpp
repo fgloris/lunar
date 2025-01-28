@@ -121,6 +121,7 @@ int main() {
     };
 
     // 加载纹理
+    /*
     box_shader_program.use();
     lunar::Texture diffuseMap("../assets/backpack/diffuse.jpg", lunar::TextureType::Diffuse);
     lunar::Texture specularMap("../assets/backpack/specular.jpg", lunar::TextureType::Specular);
@@ -133,7 +134,7 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, specularMap.id);
     box_shader_program.setUniformStruct("material", material);
     box_shader_program.setUniformStruct("light", light);
-
+    */
 
     glEnable(GL_DEPTH_TEST);
 
