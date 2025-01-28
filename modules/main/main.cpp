@@ -32,6 +32,7 @@ int main() {
     #include "GLSL/light-fs.glsl"
     ;
 
+    lunar::Model ourModel("../assets/backpack/backpack.obj");
     lunar::ShaderProgram box_shader_program(box_vertex_shader_code, box_fragment_shader_code);
     lunar::ShaderProgram light_shader_program(light_vertex_shader_code, light_fragment_shader_code);
 
@@ -131,6 +132,7 @@ int main() {
     light_shader_program.setSequentialIndices();
 
     lunar::Camera camera(glm::vec3(0.0f, -1.0f, 5.0f));
+
 
     lunar::Interface& interface = lunar::Interface::getInstance();
 

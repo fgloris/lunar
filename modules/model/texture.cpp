@@ -33,7 +33,6 @@ Texture::Texture(const std::string &filename,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, expand_param);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter_param_max);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter_param_min);
-
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         if (generate_mitmap){

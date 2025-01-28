@@ -21,8 +21,12 @@ struct Texture{
     bool flip_y = false
     );
     ~Texture();
+    void setPath(std::string p){path = std::move(p);}
     unsigned int id;
     std::string path;
     TextureType type;
+    bool operator==(const Texture& other) const {
+        return path == other.path;
+    }
 };
 }
