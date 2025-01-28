@@ -25,7 +25,7 @@ void Mesh::Draw(ShaderProgram &shader) {
     }
     glActiveTexture(GL_TEXTURE0);
 
-    // 绘制网格
+    // 绘制网格 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
