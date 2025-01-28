@@ -20,13 +20,26 @@ struct Texture{
     bool generate_mitmap = true,
     bool flip_y = false
     );
-    ~Texture();
-    void setPath(std::string p){path = std::move(p);}
     unsigned int id;
     std::string path;
     TextureType type;
     bool operator==(const std::string& other) const {
         return path == other;
     }
+};
+
+class TextureCollector{
+public:
+    static TextureCollector& getInstance(){
+        static TextureCollector instance;
+        return instance;
+    }
+    void registerTexture(unsigned int id);
+private:
+    ~TextureCollector();
+    TextureCollector() = default;
+    TextureCollector(const TextureCollector&) = delete;
+    TextureCollector& operator=(const TextureCollector&) = delete;
+    std::vector<unsigned int> texture_ids;
 };
 }

@@ -23,9 +23,10 @@ public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, float shininess=32.0f);
     void Draw(ShaderProgram &shader);
 private:
+    float shininess;
     unsigned int VAO, VBO, EBO;
     void init();
 };
@@ -52,7 +53,7 @@ private:
     
     std::vector<Mesh> processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
+    void loadMaterialTextures(std::vector<Texture>& textures, aiMaterial *mat, aiTextureType type);
 };
 }
 
