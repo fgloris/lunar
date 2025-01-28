@@ -45,7 +45,7 @@ Texture::Texture(const std::string &filename,
 }
 
 Texture::~Texture(){
-    glDeleteTextures(1, &id);
+    
 }
 
 }

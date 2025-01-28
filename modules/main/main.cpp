@@ -123,10 +123,6 @@ int main() {
     
     box_shader_program.use();
     lunar::Model ourModel("../assets/backpack/backpack.obj");
-
-    
-    lunar::Texture diffuseMap("../assets/backpack/diffuse.jpg", lunar::TextureType::Diffuse);
-    lunar::Texture specularMap("../assets/backpack/specular.jpg", lunar::TextureType::Specular);
     
 
     box_shader_program.setUniformStruct("light", light);

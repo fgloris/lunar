@@ -18,6 +18,8 @@ void Mesh::Draw(ShaderProgram &shader, unsigned int dif, unsigned int spec) {
         .shininess = 32.0f
     };
 
+    
+
     glActiveTexture(GL_TEXTURE0 + material.diffuse);
     glBindTexture(GL_TEXTURE_2D, dif);
     glActiveTexture(GL_TEXTURE0 + material.specular);
