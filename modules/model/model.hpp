@@ -28,23 +28,29 @@ class Mesh {
         void setupMesh();
 };
 
+namespace detail {
+// 辅助类，用于加载模型时的临时数据
+class ModelLoader {
+public:
+    explicit ModelLoader(const std::string& path);
+    std::vector<Mesh> loadModel(const std::string& path);
+
+private:
+    std::string directory;
+    std::vector<std::string> textures_loaded;
+    
+    std::vector<Mesh> processNode(aiNode *node, const aiScene *scene);
+    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
+};
+}
+
 class Model {
     public:
-        Model(std::string path)
-        {
-            loadModel(path);
-        }
+        explicit Model(std::string path);
         //void Draw(Shader shader);   
     private:
-        /*  模型数据  */
-        /*  函数   */
-        void loadModel(std::string path);
-        void processNode(aiNode *node, const aiScene *scene);
-        Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-        std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
-
         std::vector<Mesh> meshes;
-        std::string directory;
-        std::vector<std::string> textures_loaded;
 };
+
 }
