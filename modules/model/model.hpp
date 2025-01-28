@@ -10,6 +10,8 @@
 
 namespace lunar {
 
+class ShaderProgram;
+
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
@@ -17,19 +19,26 @@ struct Vertex {
 };
 
 class Mesh {
-    public:
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
-        std::vector<Texture> textures;
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-        //void Draw(Shader &shader);
-    private:
-        unsigned int VAO, VBO, EBO;
-        void setupMesh();
+public:
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<Texture> textures;
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+    void Draw(ShaderProgram &shader);
+private:
+    unsigned int VAO, VBO, EBO;
+    void init();
+};
+
+class Model {
+public:
+    explicit Model(std::string path);
+    void Draw(ShaderProgram &shader);   
+private:
+    std::vector<Mesh> meshes;
 };
 
 namespace detail {
-// 辅助类，用于加载模型时的临时数据
 class ModelLoader {
 public:
     explicit ModelLoader(const std::string& path);
@@ -44,13 +53,5 @@ private:
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
 };
 }
-
-class Model {
-    public:
-        explicit Model(std::string path);
-        //void Draw(Shader shader);   
-    private:
-        std::vector<Mesh> meshes;
-};
 
 }

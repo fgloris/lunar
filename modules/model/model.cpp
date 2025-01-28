@@ -1,4 +1,5 @@
 #include "model.hpp"
+#include "render/shader.hpp"
 #include <stdexcept>
 #include <iostream>
 
@@ -6,10 +7,33 @@ namespace lunar {
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures):
     vertices(vertices), indices(indices), textures(textures) {
-    setupMesh();
+    init();
 }
 
-void Mesh::setupMesh(){
+void Mesh::Draw(ShaderProgram &shader) {
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+    for(unsigned int i = 0; i < textures.size(); i++){
+        glActiveTexture(GL_TEXTURE0 + i);
+        std::string name;
+        TextureType type = textures[i].type;
+        if(type == TextureType::Diffuse)
+            name = std::string("material.diffuse") + std::to_string(diffuseNr++);
+        else if(type == TextureType::Specular)
+            name = std::string("material.specular") + std::to_string(specularNr++);
+
+        shader.setInt(("material." + name).c_str(), i);
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    }
+    glActiveTexture(GL_TEXTURE0);
+
+    // 绘制网格
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::init(){
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -121,6 +145,12 @@ std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextur
 Model::Model(std::string path) {
     detail::ModelLoader loader(path);
     meshes = loader.loadModel(path);
+}
+
+void Model::Draw(ShaderProgram &shader) {
+    for(auto &mesh : meshes) {
+        mesh.Draw(shader);
+    }
 }
 
 } // namespace lunar

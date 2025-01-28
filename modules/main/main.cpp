@@ -187,6 +187,7 @@ int main() {
     box_shader_program.setUniformStruct("material", material);
     box_shader_program.setUniformStruct("light", light);
 
+
     glEnable(GL_DEPTH_TEST);
 
     while (!window.shouldClose()) {
@@ -219,6 +220,7 @@ int main() {
         box_shader_program.setMat4("projection", projection);
         
         box_shader_program.draw();
+        ourModel.Draw(box_shader_program);
 
         // 渲染光源立方体
         light_shader_program.use();
