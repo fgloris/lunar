@@ -36,6 +36,8 @@ public:
     void Draw(ShaderProgram &shader);   
 private:
     std::vector<Mesh> meshes;
+    glm::mat4 model;
+    glm::mat3 normal_matrix;
 };
 
 namespace detail {

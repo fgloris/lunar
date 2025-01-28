@@ -1,5 +1,6 @@
 #include "model.hpp"
 #include "render/shader.hpp"
+#include "material.hpp"
 #include <stdexcept>
 #include <iostream>
 
@@ -146,9 +147,13 @@ std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextur
 Model::Model(std::string path) {
     detail::ModelLoader loader(path);
     meshes = loader.loadModel(path);
+    model = glm::mat4(1.0f);
+    normal_matrix = lunar::General::getNormalMatrix(model);
 }
 
 void Model::Draw(ShaderProgram &shader) {
+    shader.setMat3("normalMatrix", normal_matrix);
+    shader.setMat4("model", model);
     for(auto &mesh : meshes) {
         mesh.Draw(shader);
     }

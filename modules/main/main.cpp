@@ -111,13 +111,6 @@ int main() {
     interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
-    glm::mat4 box_model = glm::mat4(1.0f);
-    box_model = glm::rotate(box_model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat3 box_normal_matrix = lunar::General::getNormalMatrix(box_model);
-
-    box_shader_program.use();
-    box_shader_program.setMat3("normalMatrix", box_normal_matrix);
-    box_shader_program.setMat4("model", box_model);
 
     // 创建纹理材质
     lunar::MaterialTexture material{
@@ -135,6 +128,7 @@ int main() {
     };
 
     // 加载纹理
+    box_shader_program.use();
     lunar::Texture diffuseMap("../assets/container2.png", lunar::TextureType::Diffuse);
     lunar::Texture specularMap("../assets/container2_specular.png", lunar::TextureType::Specular);
 
