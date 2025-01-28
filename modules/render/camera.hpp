@@ -5,6 +5,7 @@
 namespace lunar{
 
 struct Event;
+class Interface;
 
 class Camera{
     public:
@@ -23,6 +24,7 @@ class Camera{
     void MoveRight(const Event& event);
     void MoveUp(const Event& event);
     void MoveDown(const Event& event);
+    void registerCallback(Interface& interface);
     [[nodiscard]] glm::vec3 getPosition() const {return camera_pos;}
 
     inline static float zoom_speed = 2.0f;

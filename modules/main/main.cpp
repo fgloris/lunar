@@ -99,16 +99,9 @@ int main() {
     interface.registerCallback("window_close", std::bind(&lunar::Window::close, &window, std::placeholders::_1));
     interface.registerCallback("window_fullscreen", std::bind(&lunar::Window::fullscreen, &window, std::placeholders::_1));
     interface.registerCallback("window_windowed", std::bind(&lunar::Window::windowed, &window, std::placeholders::_1));
-    interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::MoveLeft, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, &camera));
-    interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, &camera, std::placeholders::_1));
-    interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, &camera, std::placeholders::_1));
+    
 
-    interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, &camera, std::placeholders::_1));
+    camera.registerCallback(interface);
     interface.bindAllCallbacks("../modules/config/interface.yaml", window.getHandle());
 
 
@@ -129,8 +122,8 @@ int main() {
 
     // 加载纹理
     box_shader_program.use();
-    lunar::Texture diffuseMap("../assets/container2.png", lunar::TextureType::Diffuse);
-    lunar::Texture specularMap("../assets/container2_specular.png", lunar::TextureType::Specular);
+    lunar::Texture diffuseMap("../assets/backpack/diffuse.jpg", lunar::TextureType::Diffuse);
+    lunar::Texture specularMap("../assets/backpack/specular.jpg", lunar::TextureType::Specular);
 
     box_shader_program.setInt("material.diffuse", diffuseMap.id);
     glActiveTexture(GL_TEXTURE0 + material.diffuse);

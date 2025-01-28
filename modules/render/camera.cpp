@@ -119,6 +119,18 @@ namespace lunar{
         camera_pos -= 0.1f * move_speed * camera_up;
     }
 
+    void Camera::registerCallback(Interface& interface){
+        interface.registerCallback("camera_move_forward", std::bind(&lunar::Camera::MoveForward, this, std::placeholders::_1));
+        interface.registerCallback("camera_move_backward", std::bind(&lunar::Camera::MoveBackward, this, std::placeholders::_1));
+        interface.registerCallback("camera_move_left", std::bind(&lunar::Camera::MoveLeft, this, std::placeholders::_1));
+        interface.registerCallback("camera_move_right", std::bind(&lunar::Camera::MoveRight, this, std::placeholders::_1));
+        interface.registerCallback("camera_rotate", std::bind(&lunar::Camera::Rotate, this, std::placeholders::_1));
+        interface.registerCallback("camera_reset_zoom", std::bind(&lunar::Camera::resetZoom, this));
+        interface.registerCallback("camera_move_up", std::bind(&lunar::Camera::MoveUp, this, std::placeholders::_1));
+        interface.registerCallback("camera_move_down", std::bind(&lunar::Camera::MoveDown, this, std::placeholders::_1));
+        interface.registerCallback("camera_zoom", std::bind(&lunar::Camera::Zoom, this, std::placeholders::_1));
+    }
+
     void Camera::Rotate(const Event& event){
         camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.xoffset * rotate_speed), camera_up));
         camera_direction = glm::normalize(glm::rotate(camera_direction, static_cast<float>(event.data.mouse_move.yoffset * rotate_speed), camera_right));
