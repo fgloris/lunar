@@ -1,6 +1,8 @@
 #include "texture.hpp"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
+#include <stb_image/stb_image.h>
 
 namespace lunar{
 
@@ -12,7 +14,7 @@ Texture::Texture(const std::string &filename,
     bool generate_mitmap,
     bool flip_y
     ):type(type),path(filename){
-    
+    TextureCollector::getInstance().registerTexture(id);
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     stbi_set_flip_vertically_on_load(flip_y);
@@ -44,8 +46,16 @@ Texture::Texture(const std::string &filename,
     stbi_image_free(data);
 }
 
-Texture::~Texture(){
-    
+void TextureCollector::registerTexture(unsigned int id){
+    if (std::find(texture_ids.begin(), texture_ids.end(), id) == texture_ids.end())
+        texture_ids.push_back(id);
+}
+
+TextureCollector::~TextureCollector(){
+    for(unsigned int id : texture_ids){
+        glDeleteTextures(1, &id);
+    }
+    texture_ids.clear();
 }
 
 }
