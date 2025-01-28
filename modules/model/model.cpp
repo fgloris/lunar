@@ -24,7 +24,6 @@ void Mesh::Draw(ShaderProgram &shader) {
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     shader.setFloat("material.shininess", shininess);
-    // 绘制网格
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
