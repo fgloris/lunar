@@ -11,8 +11,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 }
 
 void Mesh::Draw(ShaderProgram &shader) {
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
+    unsigned int diffuseNr = 0;
+    unsigned int specularNr = 0;
     for(unsigned int i = 0; i < textures.size(); i++){
         glActiveTexture(GL_TEXTURE0 + i);
         std::string name;
@@ -21,7 +21,6 @@ void Mesh::Draw(ShaderProgram &shader) {
             name = std::string("material.diffuse") + std::to_string(diffuseNr++);
         else if(type == TextureType::Specular)
             name = std::string("material.specular") + std::to_string(specularNr++);
-
         shader.setInt(("material." + name).c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -135,6 +134,8 @@ std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextur
             texture.setPath(path);
             textures.push_back(texture);
             textures_loaded.push_back(path);
+        }else{
+            
         }
     }
     return textures;
