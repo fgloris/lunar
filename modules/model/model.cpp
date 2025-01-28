@@ -6,8 +6,8 @@
 
 namespace lunar {
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures):
-    vertices(vertices), indices(indices), textures(textures) {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, float shininess):
+    vertices(vertices), indices(indices), textures(textures), shininess(shininess) {
     init();
 }
 
@@ -23,9 +23,7 @@ void Mesh::Draw(ShaderProgram &shader) {
         shader.setInt(name.c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
-    glActiveTexture(GL_TEXTURE0);
-
-    // 绘制网格 
+    shader.setFloat("material.shininess", shininess);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -113,32 +111,33 @@ Mesh ModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        loadMaterialTextures(textures, material, aiTextureType_DIFFUSE);
+        loadMaterialTextures(textures, material, aiTextureType_SPECULAR);
     }
 
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type) {
-    std::vector<Texture> textures;
+void ModelLoader::loadMaterialTextures(std::vector<Texture>& textures, aiMaterial *mat, aiTextureType type) {
+    TextureType texture_type;
+    if (type == aiTextureType_DIFFUSE) {
+        texture_type = TextureType::Diffuse;
+    }else if (type == aiTextureType_SPECULAR) {
+        texture_type = TextureType::Specular;
+    }
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string path = directory + '/' + str.C_Str();
         auto it = std::find(textures_loaded.begin(), textures_loaded.end(), path);
         if (it == textures_loaded.end()) {
-            Texture texture(path, type==aiTextureType_DIFFUSE?TextureType::Diffuse:TextureType::Specular);
-            texture.setPath(path);
+            Texture texture(path, texture_type);
             textures.push_back(texture);
             textures_loaded.push_back(texture);
         }else{
             textures.push_back(*it);
         }
     }
-    return textures;
 }
 
 } // namespace detail
