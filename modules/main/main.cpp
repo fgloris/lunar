@@ -127,6 +127,7 @@ int main() {
 
     box_shader_program.setUniformStruct("light", light);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 
     GLenum error;
     while (!window.shouldClose()) {
@@ -138,7 +139,7 @@ int main() {
         glm::vec3 lightPos(
             2.0f * cos(time),  // x坐标
             0.8f,             // y坐标保持不变
-            2.0f * sin(time)  // z坐标
+            4.0f * sin(time)  // z坐标
         );
         glm::mat4 light_model = glm::mat4(1.0f);
         light_model = glm::translate(light_model, lightPos);

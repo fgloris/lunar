@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <glad/glad.h>
+#include <regex>
 
 namespace lunar {
     Shader::Shader(int shader_type, const std::string& shader_code) : shader_type(shader_type) {
@@ -124,6 +125,18 @@ namespace lunar {
             offset += sizes[i];
         }
         this->stride = stride;
+    }
+
+    void ShaderProgram::loadGLSLlib(std::string& source_code, const std::string& lib_code){
+        std::regex version_tag("#version [1-5][0-9][0-9] core");
+        std::smatch matches;
+        std::regex_search(source_code, matches, version_tag);
+        if (!matches.empty()){
+            auto pos = matches.position();
+            source_code.insert(pos, lib_code);
+        }else{
+            source_code = "#version 430 core\n" + lib_code + source_code;
+        }
     }
 
     void ShaderProgram::setInt(const std::string &name, int value) const {

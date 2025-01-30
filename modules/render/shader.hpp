@@ -35,6 +35,7 @@ public:
     ~ShaderProgram();
     void use() const;
     void draw() const;
+    void loadGLSLlib(std::string& source_code, const std::string& lib_code);
     void setIndices(std::vector<unsigned int> indices);
     void setSequentialIndices();
     void setSequentialIndices(unsigned int size);
