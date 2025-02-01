@@ -13,13 +13,27 @@ enum class TextureType{
 
 struct Texture{
     Texture(const std::string &filename,
-    TextureType type = TextureType::Diffuse,
-    const unsigned int expand_param = GL_MIRRORED_REPEAT,
-    const unsigned int filter_param_max = GL_LINEAR,
-    const unsigned int filter_param_min = GL_NEAREST,
-    bool generate_mitmap = true,
-    bool flip_y = false
+        TextureType type = TextureType::Diffuse,
+        const unsigned int expand_param = GL_MIRRORED_REPEAT,
+        const unsigned int filter_param_max = GL_LINEAR,
+        const unsigned int filter_param_min = GL_NEAREST,
+        bool generate_mitmap = true,
+        bool flip_y = false
     );
+
+    Texture(const std::string &name,
+        TextureType type,
+        const unsigned int expand_param,
+        const unsigned int filter_param_max,
+        const unsigned int filter_param_min,
+        bool generate_mitmap,
+        bool flip_y,
+        unsigned char* data,
+        int width,
+        int height,
+        int channels
+    );
+
     unsigned int id;
     std::string path;
     TextureType type;

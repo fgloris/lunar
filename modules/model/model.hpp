@@ -51,6 +51,10 @@ public:
 private:
     std::string directory;
     std::vector<Texture> textures_loaded;
+    const aiScene* scene;
+    
+    unsigned int processFBXFlags() const;
+    bool isFBX(const std::string& path) const;
     
     std::vector<Mesh> processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);

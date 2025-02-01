@@ -2,6 +2,7 @@
 #include "render/shader.hpp"
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 namespace lunar {
 
@@ -61,28 +62,76 @@ ModelLoader::ModelLoader(const std::string& path) {
     directory = path.substr(0, path.find_last_of('/'));
 }
 
+bool ModelLoader::isFBX(const std::string& path) const {
+    std::string extension = path.substr(path.find_last_of('.') + 1);
+    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    return extension == "fbx";
+}
+
+unsigned int ModelLoader::processFBXFlags() const {
+    // FBX特定的处理标志
+    return aiProcess_Triangulate |              // 将所有图元转换为三角形
+           aiProcess_FlipUVs |                  // 翻转纹理的Y坐标
+           aiProcess_GenNormals |               // 如果模型没有法线则创建法线
+           aiProcess_CalcTangentSpace |         // 计算切线和副切线
+           aiProcess_JoinIdenticalVertices |    // 合并相同的顶点
+           aiProcess_GlobalScale |              // 统一缩放
+           aiProcess_LimitBoneWeights |         // 限制骨骼权重
+           aiProcess_PopulateArmatureData |     // 填充骨骼数据
+           aiProcess_SortByPType |              // 按图元类型排序
+           aiProcess_FindDegenerates |          // 查找并删除退化的三角形
+           aiProcess_FindInvalidData |          // 查找无效数据
+           aiProcess_OptimizeMeshes;            // 优化网格
+}
+
 std::vector<Mesh> ModelLoader::loadModel(const std::string& path) {
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);    
+    unsigned int flags = isFBX(path) ? processFBXFlags() : 
+        (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+    
+    scene = import.ReadFile(path, flags);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw std::runtime_error(std::string("Model Import Error: ASSIMP::") + import.GetErrorString());
     }
-    
-    return processNode(scene->mRootNode, scene);
+
+    // 检查是否有网格
+    if(scene->mNumMeshes == 0) {
+        throw std::runtime_error("Model has no meshes");
+    }
+
+    // 检查材质
+    if(scene->mNumMaterials == 0) {
+        std::cout << "Warning: Model has no materials" << std::endl;
+    }
+
+    try {
+        return processNode(scene->mRootNode, scene);
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Failed to process model: ") + e.what());
+    }
 }
 
 std::vector<Mesh> ModelLoader::processNode(aiNode *node, const aiScene *scene) {
     std::vector<Mesh> meshes;
+    
+    // 处理当前节点的所有网格
     for(unsigned int i = 0; i < node->mNumMeshes; i++) {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
-        meshes.push_back(processMesh(mesh, scene));         
+        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        try {
+            meshes.push_back(processMesh(mesh, scene));
+        } catch (const std::exception& e) {
+            std::cerr << "Warning: Failed to process mesh " << i << ": " << e.what() << std::endl;
+            continue;
+        }
     }
     
+    // 递归处理子节点
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
         auto childMeshes = processNode(node->mChildren[i], scene);
         meshes.insert(meshes.end(), childMeshes.begin(), childMeshes.end());
     }
+    
     return meshes;
 }
 
@@ -119,22 +168,79 @@ Mesh ModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 }
 
 void ModelLoader::loadMaterialTextures(std::vector<Texture>& textures, aiMaterial *mat, aiTextureType type) {
-    TextureType texture_type;
+    TextureType texture_type = TextureType::Diffuse;
     if (type == aiTextureType_DIFFUSE) {
         texture_type = TextureType::Diffuse;
-    }else if (type == aiTextureType_SPECULAR) {
+    } else if (type == aiTextureType_SPECULAR) {
         texture_type = TextureType::Specular;
     }
+
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
+        
+        // 首先尝试从嵌入纹理中加载
+        const aiTexture* embeddedTex = scene->GetEmbeddedTexture(str.C_Str());
+        if(embeddedTex != nullptr) {
+            // 处理嵌入纹理
+            int width, height, channels;
+            unsigned char* data;
+            
+            if(embeddedTex->mHeight == 0) {
+                // 压缩纹理
+                data = stbi_load_from_memory(
+                    reinterpret_cast<unsigned char*>(embeddedTex->pcData),
+                    embeddedTex->mWidth,  // mWidth在这种情况下包含完整的数据大小
+                    &width, &height, &channels, 0
+                );
+            } else {
+                // 未压缩纹理
+                width = embeddedTex->mWidth;
+                height = embeddedTex->mHeight;
+                channels = 4; // 假设RGBA
+                data = reinterpret_cast<unsigned char*>(embeddedTex->pcData);
+            }
+
+            if(data) {
+                // 使用现有的Texture构造函数创建纹理
+                std::string embedded_name = std::string("embedded_") + str.C_Str();
+                Texture texture(
+                    embedded_name,           // 文件名（用于标识）
+                    texture_type,           // 纹理类型
+                    GL_REPEAT,             // 展开参数
+                    GL_LINEAR,             // 放大过滤
+                    GL_LINEAR_MIPMAP_LINEAR, // 缩小过滤
+                    true,                  // 生成mipmap
+                    false,                 // 不翻转Y轴
+                    data,                  // 图像数据
+                    width,                 // 宽度
+                    height,                // 高度
+                    channels              // 通道数
+                );
+
+                textures.push_back(texture);
+                textures_loaded.push_back(texture);
+
+                // 如果是压缩纹理，需要释放数据
+                if(embeddedTex->mHeight == 0) {
+                    stbi_image_free(data);
+                }
+                continue;
+            }
+        }
+
+        // 如果没有嵌入纹理，尝试从文件加载
         std::string path = directory + '/' + str.C_Str();
         auto it = std::find(textures_loaded.begin(), textures_loaded.end(), path);
         if (it == textures_loaded.end()) {
-            Texture texture(path, texture_type);
-            textures.push_back(texture);
-            textures_loaded.push_back(texture);
-        }else{
+            try {
+                Texture texture(path, texture_type);
+                textures.push_back(texture);
+                textures_loaded.push_back(texture);
+            } catch (const std::exception& e) {
+                std::cerr << "Warning: Failed to load texture: " << path << std::endl;
+            }
+        } else {
             textures.push_back(*it);
         }
     }
