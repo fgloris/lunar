@@ -1,6 +1,5 @@
 #include "model.hpp"
 #include "render/shader.hpp"
-#include "material.hpp"
 #include <stdexcept>
 #include <iostream>
 

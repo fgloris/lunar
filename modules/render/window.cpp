@@ -27,8 +27,8 @@ namespace lunar {
     void Window::init(std::string config_path) {
         YAML::Node config = YAML::LoadFile(config_path);
         this->title = config["window_settings"]["title"].as<std::string>();
-        this->width = config["window_settings"]["width"].as<int>();
-        this->height = config["window_settings"]["height"].as<int>();
+        this->default_width = this->width = config["window_settings"]["width"].as<int>();
+        this->default_height = this->height = config["window_settings"]["height"].as<int>();
         this->isFullscreen = config["window_settings"]["isFullscreen"].as<bool>();
         initGLFW();
         initWindow();
@@ -78,8 +78,8 @@ namespace lunar {
     }
 
     void Window::windowed(const Event& event) {
-        width = 1920;
-        height = 1080;
+        width = default_width;
+        height = default_height;
         glfwSetWindowMonitor(window, nullptr, 0, 0, width, height, GLFW_DONT_CARE);
         isFullscreen = false;
     }

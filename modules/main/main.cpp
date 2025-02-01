@@ -1,10 +1,6 @@
-#include "render/window.hpp"
-#include "render/shader.hpp"
-#include "render/camera.hpp"
+#include "render/render.hpp"
 #include "interface/interface.hpp"
-#include "model/texture.hpp"
 #include "model/model.hpp"
-#include "model/material.hpp"
 #include <iostream>
 #include <functional>
 #include <cmath>
@@ -129,10 +125,11 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    lunar::PostProcesser postprocesser;
+
     GLenum error;
     while (!window.shouldClose()) {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        postprocesser.tobeDrawn();
 
         // 计算光源位置
         float time = static_cast<float>(glfwGetTime());
@@ -170,6 +167,8 @@ int main() {
         light_shader_program.setMat4("projection", projection);
         light_shader_program.draw();
 
+        postprocesser.toDraw();
+        postprocesser.draw();
         window.swapBuffers();
         window.pollEvents();
         if ((error = glGetError()) != GL_NO_ERROR) {
@@ -181,7 +180,7 @@ int main() {
                 case GL_OUT_OF_MEMORY:      errorMsg = "GL_OUT_OF_MEMORY"; break;
                 default:                    errorMsg = "UNKNOWN"; break;
             }
-            std::cout << "OpenGL错误 " << "Draw" << ": " << errorMsg << std::endl;
+            std::cout << "OpenGL错误 : " << errorMsg << std::endl;
         }
     }
 

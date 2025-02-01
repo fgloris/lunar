@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "texture.hpp"
+#include "material.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

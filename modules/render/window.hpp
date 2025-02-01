@@ -43,7 +43,8 @@ namespace lunar {
         void initGLAD();
 
         GLFWwindow* window{nullptr};
-        int width{0}, height{0};
+        int default_width{2560}, default_height{1600};
+        int width{default_width}, height{default_height};
         std::string title;
         bool isFullscreen{false};
     };
