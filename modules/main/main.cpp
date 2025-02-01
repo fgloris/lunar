@@ -3,6 +3,7 @@
 #include "model/model.hpp"
 #include <iostream>
 #include <functional>
+#include <chrono>
 #include <cmath>
 
 int main() {
@@ -129,6 +130,7 @@ int main() {
 
     GLenum error;
     while (!window.shouldClose()) {
+        auto start = std::chrono::high_resolution_clock::now();
         postprocesser.tobeDrawn();
 
         // 计算光源位置
@@ -171,6 +173,8 @@ int main() {
         postprocesser.draw();
         window.swapBuffers();
         window.pollEvents();
+        auto end = std::chrono::high_resolution_clock::now();
+        //std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
         if ((error = glGetError()) != GL_NO_ERROR) {
             std::string errorMsg;
             switch (error) {

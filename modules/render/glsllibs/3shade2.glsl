@@ -23,10 +23,10 @@ vec3 HSV2RGB(vec3 hsv) {
 }
 
 vec3 color_thinning(vec3 rgb, float threshold) {
-    float offset = 0.5 / threshold;
+    float offset = 1.0 / threshold;
     vec3 hsv = RGB2HSV(rgb);
     float value = hsv.z;
-    value = float(int(value * threshold + offset)) / threshold;
+    value = float(int((value * threshold) + offset)) / threshold;
     return HSV2RGB(vec3(hsv.x, hsv.y, value));
 }
 )"
