@@ -127,16 +127,18 @@ namespace lunar {
         this->stride = stride;
     }
 
-    void ShaderProgram::loadGLSLlib(std::string& source_code, const std::string& lib_code){
+    std::string ShaderProgram::loadGLSLlib(const std::string& source_code, const std::string& lib_code){
         std::regex version_tag("#version [1-5][0-9][0-9] core");
         std::smatch matches;
-        std::regex_search(source_code, matches, version_tag);
+        std::string source_code_copy = source_code;
+        std::regex_search(source_code_copy, matches, version_tag);
         if (!matches.empty()){
-            auto pos = matches.position();
-            source_code.insert(pos, lib_code);
+            auto pos = matches.position() + matches.length();
+            source_code_copy.insert(pos, lib_code);
         }else{
-            source_code = "#version 430 core\n" + lib_code + source_code;
+            source_code_copy = "#version 430 core\n" + lib_code + source_code_copy;
         }
+        return source_code_copy;
     }
 
     void ShaderProgram::setInt(const std::string &name, int value) const {

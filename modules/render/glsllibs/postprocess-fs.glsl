@@ -8,6 +8,6 @@ uniform sampler2D screenTexture;
 
 void main()
 { 
-    FragColor = texture(screenTexture, TexCoords);
+    FragColor = vec4(color_thinning(texture(screenTexture, TexCoords).rgb, 5.0), 1.0);
 }
 )"

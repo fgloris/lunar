@@ -22,11 +22,11 @@ vec3 HSV2RGB(vec3 hsv) {
     return vec3(m + c, m + x, m);
 }
 
-vec3 cartoonify(vec3 rgb) {
+vec3 color_thinning(vec3 rgb, float threshold) {
+    float offset = 0.5 / threshold;
     vec3 hsv = RGB2HSV(rgb);
     float value = hsv.z;
-    value = float(int(value * 5)) / 5;
+    value = float(int(value * threshold + offset)) / threshold;
     return HSV2RGB(vec3(hsv.x, hsv.y, value));
 }
-
 )"

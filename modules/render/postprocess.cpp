@@ -1,9 +1,19 @@
 #include "postprocess.hpp"
+#include "shader.hpp"
 #include "window.hpp"
 #include <stdexcept>
 #include <iostream>
 
 namespace lunar {
+
+static const std::string postprocess_vertex_shader = 
+#include "glsllibs/postprocess-vs.glsl"
+;
+static std::string postprocess_fragment_shader = ShaderProgram::loadGLSLlib(
+    #include "glsllibs/postprocess-fs.glsl"
+    ,
+    #include "glsllibs/3shade2.glsl"
+);
 
 PostProcesser::PostProcesser():shader(postprocess_vertex_shader, postprocess_fragment_shader) {
     glGenFramebuffers(1, &framebuffer);
