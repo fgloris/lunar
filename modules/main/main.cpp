@@ -119,7 +119,7 @@ int main() {
     // 加载纹理
     
     box_shader_program.use();
-    lunar::Model ourModel("../assets/backpack/backpack.obj");
+    lunar::Model ourModel("../assets/The_Boss.fbx");
     
 
     box_shader_program.setUniformStruct("light", light);
@@ -137,7 +137,7 @@ int main() {
         float time = static_cast<float>(glfwGetTime());
         glm::vec3 lightPos(
             2.0f * cos(time),  // x坐标
-            0.8f,             // y坐标保持不变
+            2.0f,             // y坐标保持不变
             4.0f * sin(time)  // z坐标
         );
         glm::mat4 light_model = glm::mat4(1.0f);

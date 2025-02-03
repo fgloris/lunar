@@ -60,7 +60,7 @@ PostProcesser::PostProcesser():shader(postprocess_vertex_shader, postprocess_fra
 void PostProcesser::tobeDrawn() {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 }

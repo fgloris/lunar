@@ -95,12 +95,10 @@ std::vector<Mesh> ModelLoader::loadModel(const std::string& path) {
         throw std::runtime_error(std::string("Model Import Error: ASSIMP::") + import.GetErrorString());
     }
 
-    // 检查是否有网格
     if(scene->mNumMeshes == 0) {
         throw std::runtime_error("Model has no meshes");
     }
 
-    // 检查材质
     if(scene->mNumMaterials == 0) {
         std::cout << "Warning: Model has no materials" << std::endl;
     }
@@ -126,7 +124,6 @@ std::vector<Mesh> ModelLoader::processNode(aiNode *node, const aiScene *scene) {
         }
     }
     
-    // 递归处理子节点
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
         auto childMeshes = processNode(node->mChildren[i], scene);
         meshes.insert(meshes.end(), childMeshes.begin(), childMeshes.end());
