@@ -2,6 +2,7 @@
 #include "fmt/format.h"
 #include <yaml-cpp/yaml.h>
 #include <iostream>
+#include <utility>
 
 namespace lunar {
 [[nodiscard]] std::string Event::what() const{
@@ -75,7 +76,7 @@ void Interface::registerCallback(const std::string& name, EventCallbackFunction 
     if (all_callbacks.find(name) != all_callbacks.end()){
         throw std::runtime_error("Callback already registered: " + name);
     }
-    all_callbacks[name] = callback;
+    all_callbacks[name] = std::move(callback);
     registered = true;
 }
 

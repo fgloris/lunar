@@ -80,40 +80,32 @@ vec3 color_thinning(vec3 rgb, float threshold) {
     return HSV2RGB(vec3(hsv.x, hsv.y, value));
 }
 
-float getEdgeStrength(vec3 normal, vec3 viewDir) {
-    float edge = 1.0 - max(dot(normalize(normal), viewDir), 0.0);
-    if (edge > 0.8) return 1.0;
-    else return 0.0;
-}
-
 void main()
 {
     vec3 lightDir = normalize(light.position - fragPos);
     vec3 viewDir = normalize(viewPos - fragPos);
 
-    // ambient
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+    //float edge = 1.0 - max(dot(normalize(normal), viewDir), 0.0);
+    //if (edge < 0.8) {
+        // ambient
+        vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
 
-    // diffuse
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = light.color * diff * light.diffuse * vec3(texture(material.diffuse, TexCoords));
+        // diffuse
+        float diff = max(dot(normal, lightDir), 0.0);
+        vec3 diffuse = light.color * diff * light.diffuse * vec3(texture(material.diffuse, TexCoords));
 
-    // specular
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    vec3 specular = light.color * spec * light.specular * vec3(texture(material.specular, TexCoords));
+        // specular
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+        vec3 specular = light.color * spec * light.specular * vec3(texture(material.specular, TexCoords));
 
-    // 基础光照结果
-    vec3 result = ambient + diffuse + specular;
-    
-    // 应用三渲二效果
-    result = color_thinning(result, 2.0);
-    
-    // 添加边缘
-    float edgeStrength = getEdgeStrength(normal, viewDir);
-    vec3 edgeColor = vec3(0.0); // 黑色边缘
-    result = mix(result, edgeColor, edgeStrength);
-
-    fragColor = vec4(result, 1.0);
+        // 基础光照结果
+        vec3 result = ambient + diffuse + specular;
+        
+        // 应用三渲二效果
+        result = color_thinning(result, 2.0);
+        fragColor = vec4(result, 1.0);
+    //}
+    //else fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
 )"

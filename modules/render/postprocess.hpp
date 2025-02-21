@@ -9,7 +9,10 @@ public:
     void draw();
 private:
     ShaderProgram shader;
-    unsigned int framebuffer, texture, renderbuffer;
+    unsigned int framebuffer;
+    unsigned int colorTexture;
+    unsigned int depthTexture;
+    unsigned int renderbuffer;
 };
 
 }
